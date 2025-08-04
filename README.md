@@ -1,46 +1,29 @@
 # Village Simulator
 
-🎯 **Objectif de la simulation**
+Une simulation minimaliste d'un village en 2D. Les habitants se déplacent entre les bâtiments selon les différentes phases de la journée et réagissent de manière autonome.
 
-Simulation autonome d’un village peuplé d’environ 30 personnages, chacun doté de caractéristiques propres, d’un cycle de vie, d’activités quotidiennes et d’interactions avec les autres. La visualisation s’effectue en temps réel avec Pygame.
+## Fonctionnalités actuelles
 
-🛠️ **Changements récents**
+- Chargement d'une carte (à partir de `map.json`) contenant les bâtiments du village.
+- Personnages générés avec des noms aléatoires et une maison d'origine.
+- Phases de la journée : matin, midi, soir et nuit.
+- Déplacement en ligne droite avec une légère part d'aléatoire.
+- Regroupement des personnages au **centre** des bâtiments.
+- Quand ils sont immobiles, les personnages restent dans un petit périmètre autour de leur bâtiment et bougent de manière saccadée.
+- Chaque villageois possède un **genre** (couleur intérieure) et un **rôle** (couleur extérieure) déterminant son lieu de travail.
+- Les enfants sont plus petits et se rendent automatiquement à l'école pendant la journée.
 
-- Refactorisation des classes `Character` et `World` pour améliorer la modularité.
-- Ajout d’une grille dans `World` pour gérer les positions.
-- Simplification des logs pour réduire les informations inutiles.
-- Ajout d’un éditeur de carte (`map_editor.py`) pour générer `map.json`.
-- Introduction d’une classe `Simulation` chargée d’avancer le temps (à intégrer dans la boucle principale).
+## Lancer la simulation
 
-📋 **Prochaines étapes**
+```bash
+pip install -r requirements.txt
+python main.py
+```
 
-- Corriger l’appel à `move_towards_target` dans `Simulation.run_tick`.
-- Intégrer la classe `Simulation` dans `main.py` pour animer les personnages.
-- Étendre `Character.choose_action` aux phases du soir et de la nuit.
-- Conserver le type et la taille des bâtiments dans l’éditeur et vérifier les limites de la carte.
-- Assurer l’encodage UTF‑8 lors de la lecture/écriture de `map.json`.
-- Ignorer les fichiers de logs comme `simulation.log` via `.gitignore`.
-- Implémenter un système de pathfinding et des interactions entre villageois pour finaliser le MVP1.
+## Prochaines étapes
 
-## Éditeur de Carte
+Les idées d'évolutions futures sont listées dans [TODO.md](TODO.md).
 
-Un éditeur de carte simple est disponible pour créer la carte du village :
+## Licence
 
-- Lancer `map_editor.py` pour afficher une carte vide.
-- Cliquez successivement pour positionner les bâtiments (maison, ferme, forge, etc.).
-- Une fois tous les bâtiments placés, la carte est sauvegardée dans `map.json` et peut être utilisée dans la simulation principale.
-
-🧰 **Éléments techniques à définir ensuite**
-
-- Modèle de simulation (discret/continu)
-- Sauvegarde/chargement de l’état du monde
-- Extensions futures possibles : maladies, météo, reproduction, économie locale…
-
-📌 **Règles importantes**
-
-- Tout nouveau fichier ou modification doit être testable immédiatement.
-- Les classes doivent rester simples, découplées et réutilisables.
-- Chaque commit doit inclure une description claire des ajouts.
-- Ne jamais tout mettre dans un seul fichier.
-- Ajouter des `TODO` ou `# next step` quand une fonction est prévue mais non finie.
-
+Projet open source destiné à l'expérimentation.

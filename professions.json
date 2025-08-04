@@ -1,3 +1,10 @@
 [
-  "fermier", "boulanger", "forgeron", "enfant", "sage", "chasseur", "cuisinier"
+  {"name": "enfant", "building": "école", "color": [255, 255, 0]},
+  {"name": "fermier", "building": "ferme", "color": [34, 139, 34]},
+  {"name": "forgeron", "building": "forge", "color": [169, 169, 169]},
+  {"name": "cuisinier", "building": "taverne", "color": [255, 165, 0]},
+  {"name": "marchand", "building": "marché", "color": [218, 165, 32]},
+  {"name": "médecin", "building": "hôpital", "color": [255, 0, 0]},
+  {"name": "bibliothécaire", "building": "bibliothèque", "color": [148, 0, 211]},
+  {"name": "artisan", "building": "atelier", "color": [160, 150, 120]}
 ]

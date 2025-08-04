@@ -1,11 +1,20 @@
-# Classe Building, représentant un bâtiment
+"""Logical representation of the game world.
+
+This module purposely avoids any rendering code; drawing is delegated to the
+``renderer`` module so that the world remains a pure data model."""
+
+# Classe Building, représentant un bâtiment logique sans rendu
 class Building:
-    def __init__(self, name, position, size=(30, 30), type="maison", color=(100, 100, 100)):
+    def __init__(self, name, position, size=(30, 30), type="maison"):
         self.name = name
         self.position = position  # (x, y)
         self.size = size  # (w, h)
         self.type = type  # maison, ferme, forge, taverne, etc.
-        self.color = color
+        # Centre du bâtiment, utilisé comme point de rassemblement
+        self.center = (
+            position[0] + size[0] / 2,
+            position[1] + size[1] / 2,
+        )
 
 class InteractiveObject:
     def __init__(self, name, position, type):

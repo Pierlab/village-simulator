@@ -1,4 +1,4 @@
-# Point d'entrée de la simulation
+"""Point d'entrée de la simulation et configuration initiale."""
 
 import pygame
 from settings import (
@@ -11,6 +11,7 @@ from settings import (
 from character import Character
 from world import World, Building
 from simulation import Simulation
+from renderer import Renderer
 import json
 import logging
 import random  # Importation de random pour le choix aléatoire
@@ -38,29 +39,33 @@ def main():
         building_configs = {b["type"]: b for b in json.load(f)}
 
     # Chargement des données de la carte depuis le fichier JSON
+    appearance = {}
     with open("map.json", "r", encoding="utf-8") as f:
         map_data = json.load(f)
         for item in map_data:
             cfg = building_configs.get(item["type"], {})
             color = tuple(item.get("color", cfg.get("color", (100, 100, 100))))
             size = tuple(item.get("size", cfg.get("size", (40, 40))))
-            world.add_building(
-                Building(
-                    item["name"],
-                    tuple(item["position"]),
-                    size,
-                    type=item["type"],
-                    color=color,
-                )
+            building = Building(
+                item["name"],
+                tuple(item["position"]),
+                size,
+                type=item["type"],
             )
+            world.add_building(building)
+            appearance[building] = color
 
     # Vérification du nombre de bâtiments
     if len(world.buildings) != len(map_data):
         logging.warning("Le nombre de bâtiments affichés ne correspond pas à ceux définis dans map.json.")
 
-    # Chargement des noms depuis names.json
+    # Chargement des données de personnalisation
     with open("names.json", "r", encoding="utf-8") as f:
         names = json.load(f)
+    with open("genders.json", "r", encoding="utf-8") as f:
+        genders = [g["name"] for g in json.load(f)]
+    with open("professions.json", "r", encoding="utf-8") as f:
+        roles = [r["name"] for r in json.load(f)]
 
     # Initialisation des personnages : chacun commence dans une maison
     houses = [b for b in world.buildings if b.type == "maison"]
@@ -71,27 +76,20 @@ def main():
 
     villagers = []
     for home in home_buildings:
-        position = home.position if home else (0, 0)
+        position = home.center if home else (0, 0)
         villagers.append(
             Character(
                 name=random.choice(names),
                 position=position,
                 random_factor=MOVEMENT_RANDOM_FACTOR,
+                role=random.choice(roles),
+                gender=random.choice(genders),
             )
         )
 
-    # Initialisation de la simulation
+    # Initialisation de la simulation et du rendu
     simulation = Simulation(world, villagers)
-
-    # Affichage initial des bâtiments avec leurs noms
-    font = pygame.font.SysFont(None, 20)
-    for b in world.buildings:
-        bx, by = b.position
-        bw, bh = b.size
-        pygame.draw.rect(screen, b.color, (bx, by, bw, bh))
-        name_text = font.render(b.name, True, (0, 0, 0))
-        text_rect = name_text.get_rect(center=(bx + bw / 2, by + bh / 2))
-        screen.blit(name_text, text_rect)
+    renderer = Renderer(screen, world, appearance)
 
     # Simulation loop
     clock = pygame.time.Clock()
@@ -102,32 +100,7 @@ def main():
                 running = False
 
         simulation.run_tick()
-
-        # Affichage
-        screen.fill((50, 150, 50))
-        for b in world.buildings:
-            bx, by = b.position
-            bw, bh = b.size
-            pygame.draw.rect(screen, b.color, (bx, by, bw, bh))
-            name_text = font.render(b.name, True, (0, 0, 0))
-            text_rect = name_text.get_rect(center=(bx + bw / 2, by + bh / 2))
-            screen.blit(name_text, text_rect)
-
-        # Affichage des personnages
-        for villager in villagers:
-            vx, vy = villager.position
-            pygame.draw.circle(screen, (0, 0, 255), (int(vx), int(vy)), 10)
-            name_text = font.render(villager.name, True, (255, 255, 255))
-            text_rect = name_text.get_rect(center=(int(vx), int(vy) - 15))
-            screen.blit(name_text, text_rect)
-
-        # Affichage de l'horloge
-        hours = int(simulation.time_of_day)
-        minutes = int((simulation.time_of_day - hours) * 60)
-        clock_text = font.render(f"{hours:02d}:{minutes:02d}", True, (0, 0, 0))
-        screen.blit(clock_text, (10, 10))
-
-        pygame.display.flip()
+        renderer.draw(villagers, simulation.time_of_day)
         clock.tick(1000 // TICK_DURATION)
 
     pygame.quit()
