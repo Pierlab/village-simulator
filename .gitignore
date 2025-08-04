@@ -1,18 +1,6 @@
-# Python
+# Logs
+simulation.log
+
+# Python cache
 __pycache__/
-*.py[cod]
-*.pyo
-*.pyd
-*.swp
-.Python
-venv/
-.env
-
-# VSCode
-.vscode/
-
-# Mac/Linux
-.DS_Store
-
-# Windows
-Thumbs.db
+*.pyc
