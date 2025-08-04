@@ -9,18 +9,18 @@ class Config:
     screen_width: int = 1200
     screen_height: int = 720
     # Largeur du panneau latéral d'information
-    menu_width: int = 200
+    menu_width: int = 300
 
     # Durée d'un tick et nombre de villageois
     tick_duration: int = 50  # ms (pour accélérer la journée à 3 minutes)
-    num_villagers: int = 30
+    num_villagers: int = 13
 
     # Vitesse de déplacement (5 km/h)
     kmh_to_pixels_per_tick: float = 0.0
 
     # Facteurs de déplacement
     movement_random_factor: int = 10  # Intensité de l'aléatoire lors des déplacements
-    near_destination_radius: int = 30  # Rayon (en px) de déplacement autour de la cible
+    near_destination_radius: int = 40  # Rayon (en px) de déplacement autour de la cible
 
     # Tailles des personnages
     adult_radius: int = 15
