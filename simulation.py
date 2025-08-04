@@ -20,5 +20,16 @@ class Simulation:
         self.tick += 1
         self.time = self.tick * 0.1  # Met à jour l'heure de la simulation
         self.update_phase()
+        occupied_positions = []
         for char in self.characters:
+            previous_position = char.position
             char.perform_daily_action(self.day_phase, self.world)
+
+            for occupied in occupied_positions:
+                dx = char.position[0] - occupied[0]
+                dy = char.position[1] - occupied[1]
+                if dx * dx + dy * dy < 1:
+                    char.position = previous_position
+                    break
+
+            occupied_positions.append(char.position)
