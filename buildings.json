@@ -1,12 +1,12 @@
 [
-  {"name": "Maison", "type": "maison"},
-  {"name": "Ferme", "type": "ferme"},
-  {"name": "Forge", "type": "forge"},
-  {"name": "Taverne", "type": "taverne"},
-  {"name": "Place", "type": "place"},
-  {"name": "École", "type": "école"},
-  {"name": "Marché", "type": "marché"},
-  {"name": "Hôpital", "type": "hôpital"},
-  {"name": "Bibliothèque", "type": "bibliothèque"},
-  {"name": "Atelier", "type": "atelier"}
+  {"name": "Maison", "type": "maison", "size": [40, 40]},
+  {"name": "Ferme", "type": "ferme", "size": [40, 40]},
+  {"name": "Forge", "type": "forge", "size": [40, 40]},
+  {"name": "Taverne", "type": "taverne", "size": [40, 40]},
+  {"name": "Place", "type": "place", "size": [40, 40]},
+  {"name": "École", "type": "école", "size": [40, 40]},
+  {"name": "Marché", "type": "marché", "size": [40, 40]},
+  {"name": "Hôpital", "type": "hôpital", "size": [40, 40]},
+  {"name": "Bibliothèque", "type": "bibliothèque", "size": [40, 40]},
+  {"name": "Atelier", "type": "atelier", "size": [40, 40]}
 ]

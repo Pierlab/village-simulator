@@ -28,17 +28,19 @@ def main():
     world = World(SCREEN_WIDTH, SCREEN_HEIGHT)
 
     # Chargement des données de la carte depuis le fichier JSON
-    with open("map.json", "r") as f:
+    with open("map.json", "r", encoding="utf-8") as f:
         map_data = json.load(f)
         for item in map_data:
-            world.add_building(Building(item["name"], tuple(item["position"]), tuple(item["size"]), type=item["type"]))
+            world.add_building(
+                Building(item["name"], tuple(item["position"]), tuple(item["size"]), type=item["type"])
+            )
 
     # Vérification du nombre de bâtiments
     if len(world.buildings) != len(map_data):
         logging.warning("Le nombre de bâtiments affichés ne correspond pas à ceux définis dans map.json.")
 
     # Chargement des noms depuis names.json
-    with open("names.json", "r") as f:
+    with open("names.json", "r", encoding="utf-8") as f:
         names = json.load(f)
 
     # Initialisation des personnages : chacun commence dans un bâtiment existant

@@ -4,8 +4,8 @@ from settings import SCREEN_WIDTH, SCREEN_HEIGHT
 import json
 
 # Charger les bâtiments depuis le fichier buildings.json
-with open("buildings.json", "r") as f:
-    BUILDINGS = [(b["name"], (40, 40)) for b in json.load(f)]
+with open("buildings.json", "r", encoding="utf-8") as f:
+    BUILDINGS = json.load(f)
 
 def main():
     pygame.init()
@@ -21,8 +21,11 @@ def main():
                 running = False
             elif event.type == pygame.MOUSEBUTTONDOWN and building_idx < len(BUILDINGS):
                 mx, my = pygame.mouse.get_pos()
-                name, size = BUILDINGS[building_idx]
-                world.add_building(Building(name, (mx, my), size, type=name.lower()))
+                building = BUILDINGS[building_idx]
+                name = building["name"]
+                size = tuple(building.get("size", (40, 40)))
+                b_type = building.get("type", name.lower())
+                world.add_building(Building(name, (mx, my), size, type=b_type))
                 building_idx += 1
         screen.fill((220, 220, 220))
         # Affichage des bâtiments déjà placés
@@ -33,7 +36,7 @@ def main():
             pygame.draw.rect(screen, color, (bx, by, bw, bh))
         # Indication du prochain bâtiment à placer
         if building_idx < len(BUILDINGS):
-            txt = font.render(f"Cliquez pour placer: {BUILDINGS[building_idx][0]}", True, (0,0,0))
+            txt = font.render(f"Cliquez pour placer: {BUILDINGS[building_idx]['name']}", True, (0,0,0))
             screen.blit(txt, (20, 20))
         else:
             if len(world.buildings) != len(BUILDINGS):
@@ -43,9 +46,16 @@ def main():
                 txt = font.render("Tous les bâtiments sont placés !", True, (0,100,0))
                 screen.blit(txt, (20, 20))
                 # Sauvegarde de la carte
-                import json
-                with open("map.json", "w") as f:
-                    json.dump([{"name": b.name, "position": b.position, "size": b.size, "type": b.type} for b in world.buildings], f)
+                with open("map.json", "w", encoding="utf-8") as f:
+                    json.dump([
+                        {
+                            "name": b.name,
+                            "position": list(b.position),
+                            "size": list(b.size),
+                            "type": b.type
+                        }
+                        for b in world.buildings
+                    ], f, ensure_ascii=False)
         # Afficher les noms des bâtiments
         for b in world.buildings:
             bx, by = b.position
