@@ -5,16 +5,22 @@ This module purposely avoids any rendering code; drawing is delegated to the
 
 # Classe Building, représentant un bâtiment logique sans rendu
 class Building:
-    def __init__(self, name, position, size=(30, 30), type="maison"):
+    def __init__(self, name, position, size=(30, 30), type="maison", production=None):
         self.name = name
         self.position = position  # (x, y)
         self.size = size  # (w, h)
         self.type = type  # maison, ferme, forge, taverne, etc.
+        self.production = production or {}
+        self.inventory = {res: 0 for res in self.production}
         # Centre du bâtiment, utilisé comme point de rassemblement
         self.center = (
             position[0] + size[0] / 2,
             position[1] + size[1] / 2,
         )
+
+    def produce(self):
+        for res, rate in self.production.items():
+            self.inventory[res] = self.inventory.get(res, 0) + rate
 
 class InteractiveObject:
     def __init__(self, name, position, type):
@@ -53,3 +59,13 @@ class World:
     def is_position_free(self, position):
         x, y = position
         return 0 <= x < self.width and 0 <= y < self.height and self.grid[y][x] is None
+
+    def find_buildings_by_type(self, btype):
+        return [b for b in self.buildings if b.type == btype]
+
+    def find_nearest_building(self, position, btype):
+        candidates = self.find_buildings_by_type(btype)
+        if not candidates:
+            return None
+        px, py = position
+        return min(candidates, key=lambda b: (b.center[0]-px)**2 + (b.center[1]-py)**2)

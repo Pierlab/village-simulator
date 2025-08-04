@@ -10,13 +10,19 @@ class Simulation:
         self.characters = characters
         self.tick = 0
         self.day_phase = None
-        self.phases = ["matin", "midi", "soir", "nuit"]
-        self.phase_duration = 500  # ticks par phase
+        self.phases = ["matin", "midi", "apres_midi", "soir", "nuit"]
+        self.phase_durations = [500, 250, 250, 500, 500]  # ticks par phase
         self.time_of_day = 0.0  # Heure de la journée en heures
 
     def update_phase(self):
-        phase_index = (self.tick // self.phase_duration) % len(self.phases)
-        new_phase = self.phases[phase_index]
+        tick_in_day = self.tick % sum(self.phase_durations)
+        cumulative = 0
+        new_phase = self.phases[0]
+        for phase, duration in zip(self.phases, self.phase_durations):
+            cumulative += duration
+            if tick_in_day < cumulative:
+                new_phase = phase
+                break
         changed = new_phase != self.day_phase
         self.day_phase = new_phase
         return changed
@@ -24,9 +30,11 @@ class Simulation:
     def run_tick(self):
         """Exécute un tick de la simulation."""
         self.tick += 1
-        total_ticks = self.phase_duration * len(self.phases)
+        total_ticks = sum(self.phase_durations)
         self.time_of_day = ((self.tick % total_ticks) / total_ticks * 24 + 6) % 24
         phase_changed = self.update_phase()
+        for building in self.world.buildings:
+            building.produce()
         occupied_positions = []
         for char in self.characters:
             previous_position = char.position

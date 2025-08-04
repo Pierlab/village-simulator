@@ -50,4 +50,11 @@ class Renderer:
         clock_text = self.font.render(f"{hours:02d}:{minutes:02d}", True, (0, 0, 0))
         self.screen.blit(clock_text, (10, 10))
 
+        info_y = 30
+        for villager in villagers:
+            activity = f"{villager.name}: {villager.state}"
+            activity_text = self.font.render(activity, True, (0, 0, 0))
+            self.screen.blit(activity_text, (10, info_y))
+            info_y += 15
+
         pygame.display.flip()

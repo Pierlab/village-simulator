@@ -1,6 +1,4 @@
-[
-  "Alice", "Bob", "Chloé", "David", "Emma", "Félix", "Gisèle", "Hugo", "Inès", "Jules", "Léa", "Marc", "Nina", "Oscar", "Paul",
-  "Quentin", "Rose", "Sophie", "Tom", "Ulysse", "Valérie", "Wendy", "Xavier", "Yasmine", "Zach",
-  "Adrien", "Brigitte", "Camille", "Damien", "Elise", "François", "Gaëlle", "Henri", "Isabelle", "Julien",
-  "Karine", "Luc", "Maud", "Noé", "Olivier", "Pascale", "Romain", "Sabine", "Théo", "Victor"
-]
+{
+  "homme": ["Bob", "David", "Félix", "Hugo", "Jules", "Marc", "Oscar", "Paul", "Quentin", "Tom", "Ulysse", "Xavier", "Zach", "Adrien", "Damien", "François", "Henri", "Julien", "Luc", "Noé", "Olivier", "Romain", "Théo", "Victor"],
+  "femme": ["Alice", "Chloé", "Emma", "Gisèle", "Inès", "Léa", "Nina", "Rose", "Sophie", "Valérie", "Wendy", "Yasmine", "Brigitte", "Camille", "Elise", "Gaëlle", "Isabelle", "Karine", "Maud", "Pascale", "Sabine"]
+}

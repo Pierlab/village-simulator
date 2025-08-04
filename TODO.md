@@ -10,7 +10,7 @@
 ## Règles de vie
 - [x] Les enfants passent la journée à l'école.
 - [x] Chaque personnage possède un rôle et se rend dans le bâtiment associé.
-- [ ] Chaque bâtiment produit des ressources au fil du temps.
+- [x] Chaque bâtiment produit des ressources au fil du temps.
 - [ ] Gestion d'un inventaire pour les personnages et les bâtiments.
 - [ ] Les travailleurs gagnent de l'argent, se fatiguent et doivent manger.
 - [ ] Transfert d'argent ou de matériel entre personnages et bâtiments.
