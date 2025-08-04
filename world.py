@@ -5,22 +5,38 @@ This module purposely avoids any rendering code; drawing is delegated to the
 
 # Classe Building, représentant un bâtiment logique sans rendu
 class Building:
-    def __init__(self, name, position, size=(30, 30), type="maison", production=None):
+    def __init__(
+        self,
+        name,
+        position,
+        size=(30, 30),
+        type="maison",
+        production=None,
+        color=(100, 100, 100),
+    ):
         self.name = name
         self.position = position  # (x, y)
         self.size = size  # (w, h)
         self.type = type  # maison, ferme, forge, taverne, etc.
         self.production = production or {}
         self.inventory = {res: 0 for res in self.production}
+        self.color = color
+        self.occupants = []
         # Centre du bâtiment, utilisé comme point de rassemblement
         self.center = (
             position[0] + size[0] / 2,
             position[1] + size[1] / 2,
         )
 
-    def produce(self):
+    def contains(self, position):
+        x, y = position
+        bx, by = self.position
+        bw, bh = self.size
+        return bx <= x <= bx + bw and by <= y <= by + bh
+
+    def produce(self, occupants=0):
         for res, rate in self.production.items():
-            self.inventory[res] = self.inventory.get(res, 0) + rate
+            self.inventory[res] = self.inventory.get(res, 0) + rate * occupants
 
 class InteractiveObject:
     def __init__(self, name, position, type):

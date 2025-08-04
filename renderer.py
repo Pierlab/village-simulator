@@ -5,18 +5,17 @@ Static elements like buildings are pre-rendered on a background surface to
 minimise per-frame work."""
 
 import pygame
+from settings import SCREEN_WIDTH, MENU_WIDTH
 
 
 class Renderer:
     """Draws the logical world state to a Pygame screen."""
 
-    def __init__(self, screen, world, appearance):
+    def __init__(self, screen, world):
         self.screen = screen
         self.world = world
-        self.appearance = appearance  # mapping building -> colour
         self.font = pygame.font.SysFont(None, 20)
-        # Pre-render static background with buildings
-        self.background = pygame.Surface(screen.get_size())
+        self.background = pygame.Surface((world.width, world.height))
         self._draw_static_world()
 
     def _draw_static_world(self):
@@ -24,8 +23,7 @@ class Renderer:
         for building in self.world.buildings:
             bx, by = building.position
             bw, bh = building.size
-            color = self.appearance.get(building, (100, 100, 100))
-            pygame.draw.rect(self.background, color, (bx, by, bw, bh))
+            pygame.draw.rect(self.background, building.color, (bx, by, bw, bh))
             name_text = self.font.render(building.name, True, (0, 0, 0))
             text_rect = name_text.get_rect(center=(bx + bw / 2, by + bh / 2))
             self.background.blit(name_text, text_rect)
@@ -37,24 +35,37 @@ class Renderer:
             vx, vy = villager.position
             radius = villager.radius
             pygame.draw.circle(self.screen, villager.role_color, (int(vx), int(vy)), radius)
-            inner_radius = max(1, radius - 3)
             pygame.draw.circle(
-                self.screen, villager.gender_color, (int(vx), int(vy)), inner_radius
+                self.screen, villager.occupation_color, (int(vx), int(vy)), radius, 3
             )
             name_text = self.font.render(villager.name, True, (255, 255, 255))
             text_rect = name_text.get_rect(center=(int(vx), int(vy) - radius - 5))
             self.screen.blit(name_text, text_rect)
 
+        sidebar_rect = (SCREEN_WIDTH, 0, MENU_WIDTH, self.world.height)
+        pygame.draw.rect(self.screen, (230, 230, 230), sidebar_rect)
+
         hours = int(time_of_day)
         minutes = int((time_of_day - hours) * 60)
         clock_text = self.font.render(f"{hours:02d}:{minutes:02d}", True, (0, 0, 0))
-        self.screen.blit(clock_text, (10, 10))
+        self.screen.blit(clock_text, (SCREEN_WIDTH + 10, 10))
 
-        info_y = 30
+        info_y = 40
         for villager in villagers:
-            activity = f"{villager.name}: {villager.state}"
+            activity = f"{villager.name}: {villager.current_occupation or villager.state}";
             activity_text = self.font.render(activity, True, (0, 0, 0))
-            self.screen.blit(activity_text, (10, info_y))
+            self.screen.blit(activity_text, (SCREEN_WIDTH + 10, info_y))
             info_y += 15
+
+        info_y += 10
+        for building in self.world.buildings:
+            if building.inventory:
+                inv_str = ", ".join(
+                    f"{res}:{qty}" for res, qty in building.inventory.items()
+                )
+                text = f"{building.name}: {inv_str}"
+                inv_text = self.font.render(text, True, (0, 0, 0))
+                self.screen.blit(inv_text, (SCREEN_WIDTH + 10, info_y))
+                info_y += 15
 
         pygame.display.flip()

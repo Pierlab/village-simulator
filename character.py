@@ -59,6 +59,10 @@ class Character:
         # Taille différente selon l'âge (enfant/adulte)
         self.radius = CHILD_RADIUS if role == "enfant" else ADULT_RADIUS
 
+        # Occupation courante (type de bâtiment) et couleur associée
+        self.current_occupation = None
+        self.occupation_color = (0, 0, 0)
+
     def choose_action(self, day_phase, world):
         """Choisit une action lorsque la phase de la journée change."""
         if day_phase == self.last_phase:

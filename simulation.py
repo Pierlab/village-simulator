@@ -34,7 +34,8 @@ class Simulation:
         self.time_of_day = ((self.tick % total_ticks) / total_ticks * 24 + 6) % 24
         phase_changed = self.update_phase()
         for building in self.world.buildings:
-            building.produce()
+            building.occupants = []
+
         occupied_positions = []
         for char in self.characters:
             previous_position = char.position
@@ -48,6 +49,18 @@ class Simulation:
                     break
 
             occupied_positions.append(char.position)
+
+            char.current_occupation = None
+            char.occupation_color = (0, 0, 0)
+            for building in self.world.buildings:
+                if building.contains(char.position):
+                    building.occupants.append(char)
+                    char.current_occupation = building.type
+                    char.occupation_color = building.color
+                    break
+
+        for building in self.world.buildings:
+            building.produce(len(building.occupants))
 
         if phase_changed:
             logging.info(f"===== {self.day_phase.upper()} {int(self.time_of_day):02d}h =====")
