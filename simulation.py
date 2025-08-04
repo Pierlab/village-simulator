@@ -1,25 +1,32 @@
 # Boucle principale, gestion du temps, des agents et de leurs actions
 # next step: Implémenter la boucle de simulation
 
+import logging
+
+
 class Simulation:
     def __init__(self, world, characters):
         self.world = world
         self.characters = characters
         self.tick = 0
-        self.day_phase = "matin"
+        self.day_phase = None
         self.phases = ["matin", "midi", "soir", "nuit"]
         self.phase_duration = 500  # ticks par phase
-        self.time = self.tick * 0.1  # Exemple : chaque tick représente 0.1 unité de temps
+        self.time_of_day = 0.0  # Heure de la journée en heures
 
     def update_phase(self):
         phase_index = (self.tick // self.phase_duration) % len(self.phases)
-        self.day_phase = self.phases[phase_index]
+        new_phase = self.phases[phase_index]
+        changed = new_phase != self.day_phase
+        self.day_phase = new_phase
+        return changed
 
     def run_tick(self):
         """Exécute un tick de la simulation."""
         self.tick += 1
-        self.time = self.tick * 0.1  # Met à jour l'heure de la simulation
-        self.update_phase()
+        total_ticks = self.phase_duration * len(self.phases)
+        self.time_of_day = ((self.tick % total_ticks) / total_ticks * 24 + 6) % 24
+        phase_changed = self.update_phase()
         occupied_positions = []
         for char in self.characters:
             previous_position = char.position
@@ -33,3 +40,6 @@ class Simulation:
                     break
 
             occupied_positions.append(char.position)
+
+        if phase_changed:
+            logging.info(f"===== {self.day_phase.upper()} {int(self.time_of_day):02d}h =====")

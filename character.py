@@ -1,16 +1,18 @@
+import math
 import random
-from settings import KMH_TO_PIXELS_PER_TICK
+import logging
+from settings import KMH_TO_PIXELS_PER_TICK, NEAR_DESTINATION_RADIUS
 
 
 class Character:
-    def __init__(self, name, position):
+    def __init__(self, name, position, random_factor=1.0):
         self.name = name
-        # positions are stored as floats to permettre des déplacements fluides
-        self.position = tuple(map(float, position))  # Position actuelle (x, y)
-        self.home_position = self.position  # Domicile
+        self.position = tuple(map(float, position))
+        self.home_position = self.position
         self.state = "idle"
         self.target = self.position
         self.last_phase = None
+        self.random_factor = random_factor
 
     def choose_action(self, day_phase, world):
         """Choisit une action lorsque la phase de la journée change."""
@@ -34,9 +36,12 @@ class Character:
             self.target = self.home_position
             self.state = "Dormir"
 
+        logging.info(f"{self.name} -> {self.state} ({day_phase})")
+
     def move_towards_target(self):
-        """Déplace le personnage directement vers la cible en ligne droite."""
-        if self.position == self.target:
+        """Déplace le personnage vers sa cible avec une part d'aléatoire."""
+        # Aucun mouvement si le personnage dort déjà chez lui
+        if self.state == "Dormir" and self.position == self.target:
             return
 
         x, y = self.position
@@ -44,14 +49,29 @@ class Character:
 
         dx = tx - x
         dy = ty - y
-        distance = (dx ** 2 + dy ** 2) ** 0.5
+        distance = math.hypot(dx, dy)
 
-        # Déplace le personnage à une vitesse constante définie dans settings.py
-        if distance <= KMH_TO_PIXELS_PER_TICK:
-            self.position = self.target
-        else:
-            ratio = KMH_TO_PIXELS_PER_TICK / distance
-            self.position = (x + dx * ratio, y + dy * ratio)
+        if distance <= NEAR_DESTINATION_RADIUS:
+            if self.state == "Dormir":
+                self.position = self.target
+            else:
+                self.target = (
+                    tx + random.uniform(-NEAR_DESTINATION_RADIUS, NEAR_DESTINATION_RADIUS),
+                    ty + random.uniform(-NEAR_DESTINATION_RADIUS, NEAR_DESTINATION_RADIUS),
+                )
+            return
+
+        angle = math.atan2(dy, dx) + random.uniform(-0.3, 0.3) * self.random_factor
+        step = KMH_TO_PIXELS_PER_TICK
+        nx = x + math.cos(angle) * step
+        ny = y + math.sin(angle) * step
+
+        if math.hypot(tx - nx, ty - ny) > distance:
+            ratio = step / distance
+            nx = x + dx * ratio
+            ny = y + dy * ratio
+
+        self.position = (nx, ny)
 
     def perform_daily_action(self, day_phase, world):
         """Effectue une action en fonction de la phase de la journée."""

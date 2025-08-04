@@ -4,14 +4,14 @@ from settings import SCREEN_WIDTH, SCREEN_HEIGHT
 import json
 
 # Charger les bâtiments depuis le fichier buildings.json
-with open("buildings.json", "r") as f:
-    BUILDINGS = [(b["name"], (40, 40)) for b in json.load(f)]
+with open("buildings.json", "r", encoding="utf-8") as f:
+    BUILDINGS = json.load(f)
 
 def main():
     pygame.init()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     pygame.display.set_caption("Éditeur de carte - Village Simulator")
-    font = pygame.font.SysFont(None, 32)
+    font = pygame.font.SysFont(None, 20)
     world = World(SCREEN_WIDTH, SCREEN_HEIGHT)
     building_idx = 0
     running = True
@@ -21,19 +21,22 @@ def main():
                 running = False
             elif event.type == pygame.MOUSEBUTTONDOWN and building_idx < len(BUILDINGS):
                 mx, my = pygame.mouse.get_pos()
-                name, size = BUILDINGS[building_idx]
-                world.add_building(Building(name, (mx, my), size, type=name.lower()))
+                building = BUILDINGS[building_idx]
+                name = building["name"]
+                size = tuple(building.get("size", (40, 40)))
+                b_type = building.get("type", name.lower())
+                color = tuple(building.get("color", (100, 100, 100)))
+                world.add_building(Building(name, (mx, my), size, type=b_type, color=color))
                 building_idx += 1
         screen.fill((220, 220, 220))
         # Affichage des bâtiments déjà placés
         for b in world.buildings:
             bx, by = b.position
             bw, bh = b.size
-            color = (100, 100, 100)
-            pygame.draw.rect(screen, color, (bx, by, bw, bh))
+            pygame.draw.rect(screen, b.color, (bx, by, bw, bh))
         # Indication du prochain bâtiment à placer
         if building_idx < len(BUILDINGS):
-            txt = font.render(f"Cliquez pour placer: {BUILDINGS[building_idx][0]}", True, (0,0,0))
+            txt = font.render(f"Cliquez pour placer: {BUILDINGS[building_idx]['name']}", True, (0,0,0))
             screen.blit(txt, (20, 20))
         else:
             if len(world.buildings) != len(BUILDINGS):
@@ -43,14 +46,24 @@ def main():
                 txt = font.render("Tous les bâtiments sont placés !", True, (0,100,0))
                 screen.blit(txt, (20, 20))
                 # Sauvegarde de la carte
-                import json
-                with open("map.json", "w") as f:
-                    json.dump([{"name": b.name, "position": b.position, "size": b.size, "type": b.type} for b in world.buildings], f)
+                with open("map.json", "w", encoding="utf-8") as f:
+                    json.dump([
+                        {
+                            "name": b.name,
+                            "position": list(b.position),
+                            "size": list(b.size),
+                            "type": b.type,
+                            "color": list(b.color)
+                        }
+                        for b in world.buildings
+                    ], f, ensure_ascii=False)
         # Afficher les noms des bâtiments
         for b in world.buildings:
             bx, by = b.position
+            bw, bh = b.size
             name_txt = font.render(b.name, True, (0, 0, 0))
-            screen.blit(name_txt, (bx, by - 20))
+            text_rect = name_txt.get_rect(center=(bx + bw / 2, by + bh / 2))
+            screen.blit(name_txt, text_rect)
         pygame.display.flip()
     pygame.quit()
 

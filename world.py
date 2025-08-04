@@ -1,10 +1,11 @@
 # Classe Building, représentant un bâtiment
 class Building:
-    def __init__(self, name, position, size=(30, 30), type="maison"):
+    def __init__(self, name, position, size=(30, 30), type="maison", color=(100, 100, 100)):
         self.name = name
         self.position = position  # (x, y)
         self.size = size  # (w, h)
         self.type = type  # maison, ferme, forge, taverne, etc.
+        self.color = color
 
 class InteractiveObject:
     def __init__(self, name, position, type):
@@ -31,9 +32,11 @@ class World:
         self.zones = []     # Zones d'intérêt
 
     def add_building(self, building):
-        self.buildings.append(building)
         bx, by = building.position
         bw, bh = building.size
+        if bx < 0 or by < 0 or bx + bw > self.width or by + bh > self.height:
+            raise ValueError("Building exceeds world boundaries")
+        self.buildings.append(building)
         for x in range(bx, bx + bw):
             for y in range(by, by + bh):
                 self.grid[y][x] = building
