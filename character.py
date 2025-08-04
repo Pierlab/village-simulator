@@ -57,6 +57,8 @@ class Character:
         self.role = role
         self.role_color = tuple(r_info["color"])
         self.role_building = r_info.get("building")
+        # Libellé court (1-2 lettres) pour afficher le rôle dans le rendu
+        self.role_label = "".join(c for c in role if c.isalpha())[:2].upper()
 
         # Taille différente selon l'âge (enfant/adulte)
         self.radius = CHILD_RADIUS if role == "enfant" else ADULT_RADIUS
@@ -67,6 +69,9 @@ class Character:
         self.money = 0
         self.inventory = {}
         self.work_ratio = work_ratio
+        # Compteurs de temps passés au travail ou en activité libre
+        self.work_time = 0
+        self.leisure_time = 0
 
     def choose_action(self, day_phase, world):
         """Choisit une action lorsque la phase de la journée change."""
@@ -77,7 +82,10 @@ class Character:
 
         if day_phase in ("matin", "apres_midi"):
             target_building = None
-            go_work = random.random() < self.work_ratio or self.role == "enfant"
+            # Décide d'aller travailler selon le ratio temps de travail/temps libre
+            total = self.work_time + self.leisure_time
+            current_ratio = self.work_time / total if total else 0
+            go_work = current_ratio < self.work_ratio or self.role == "enfant"
             if go_work and self.role_building:
                 for b in world.buildings:
                     if b.type == self.role_building:
@@ -185,4 +193,9 @@ class Character:
         self.choose_action(day_phase, world)
         self.move_towards_target()
         self.attempt_purchase(world)
+
+    def reset_daily_counters(self):
+        """Réinitialise les compteurs de temps en début de journée."""
+        self.work_time = 0
+        self.leisure_time = 0
 

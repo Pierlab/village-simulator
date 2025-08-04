@@ -32,6 +32,10 @@ class Simulation:
         """Exécute un tick de la simulation."""
         self.tick += 1
         total_ticks = sum(self.phase_durations)
+        # Début d'une nouvelle journée : remise à zéro des compteurs d'occupation
+        if (self.tick - 1) % total_ticks == 0:
+            for char in self.characters:
+                char.reset_daily_counters()
         self.time_of_day = ((self.tick % total_ticks) / total_ticks * 24 + 6) % 24
         phase_changed = self.update_phase()
         for building in self.world.buildings:
@@ -63,6 +67,12 @@ class Simulation:
                     ):
                         pay_salary(char, building)
                     break
+            # Mise à jour des compteurs d'occupation pendant les phases actives
+            if self.day_phase in ("matin", "apres_midi"):
+                if char.current_occupation == char.role_building:
+                    char.work_time += 1
+                else:
+                    char.leisure_time += 1
 
         for building in self.world.buildings:
             building.produce(len(building.occupants))
