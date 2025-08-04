@@ -1,0 +1,12 @@
+[
+  {"name": "Maison", "type": "maison"},
+  {"name": "Ferme", "type": "ferme"},
+  {"name": "Forge", "type": "forge"},
+  {"name": "Taverne", "type": "taverne"},
+  {"name": "Place", "type": "place"},
+  {"name": "École", "type": "école"},
+  {"name": "Marché", "type": "marché"},
+  {"name": "Hôpital", "type": "hôpital"},
+  {"name": "Bibliothèque", "type": "bibliothèque"},
+  {"name": "Atelier", "type": "atelier"}
+]
