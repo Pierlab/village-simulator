@@ -1,0 +1,742 @@
+diff --git a/README.md b/README.md
+index 8d24176328294ee04094dc89466f2879aee1afd7..20ac94db29c564644dcfa25a31ed55fb6ee2996a 100644
+--- a/README.md
++++ b/README.md
+@@ -1,46 +1,29 @@
+ # Village Simulator
+ 
+-🎯 **Objectif de la simulation**
++Une simulation minimaliste d'un village en 2D. Les habitants se déplacent entre les bâtiments selon les différentes phases de la journée et réagissent de manière autonome.
+ 
+-Simulation autonome d’un village peuplé d’environ 30 personnages, chacun doté de caractéristiques propres, d’un cycle de vie, d’activités quotidiennes et d’interactions avec les autres. La visualisation s’effectue en temps réel avec Pygame.
++## Fonctionnalités actuelles
+ 
+-🛠️ **Changements récents**
++- Chargement d'une carte (à partir de `map.json`) contenant les bâtiments du village.
++- Personnages générés avec des noms aléatoires et une maison d'origine.
++- Phases de la journée : matin, midi, soir et nuit.
++- Déplacement en ligne droite avec une légère part d'aléatoire.
++- Regroupement des personnages au **centre** des bâtiments.
++- Quand ils sont immobiles, les personnages restent dans un petit périmètre autour de leur bâtiment et bougent de manière saccadée.
++- Chaque villageois possède un **genre** (couleur intérieure) et un **rôle** (couleur extérieure) déterminant son lieu de travail.
++- Les enfants sont plus petits et se rendent automatiquement à l'école pendant la journée.
+ 
+-- Refactorisation des classes `Character` et `World` pour améliorer la modularité.
+-- Ajout d’une grille dans `World` pour gérer les positions.
+-- Simplification des logs pour réduire les informations inutiles.
+-- Ajout d’un éditeur de carte (`map_editor.py`) pour générer `map.json`.
+-- Introduction d’une classe `Simulation` chargée d’avancer le temps (à intégrer dans la boucle principale).
++## Lancer la simulation
+ 
+-📋 **Prochaines étapes**
++```bash
++pip install -r requirements.txt
++python main.py
++```
+ 
+-- Corriger l’appel à `move_towards_target` dans `Simulation.run_tick`.
+-- Intégrer la classe `Simulation` dans `main.py` pour animer les personnages.
+-- Étendre `Character.choose_action` aux phases du soir et de la nuit.
+-- Conserver le type et la taille des bâtiments dans l’éditeur et vérifier les limites de la carte.
+-- Assurer l’encodage UTF‑8 lors de la lecture/écriture de `map.json`.
+-- Ignorer les fichiers de logs comme `simulation.log` via `.gitignore`.
+-- Implémenter un système de pathfinding et des interactions entre villageois pour finaliser le MVP1.
++## Prochaines étapes
+ 
+-## Éditeur de Carte
++Les idées d'évolutions futures sont listées dans [TODO.md](TODO.md).
+ 
+-Un éditeur de carte simple est disponible pour créer la carte du village :
+-
+-- Lancer `map_editor.py` pour afficher une carte vide.
+-- Cliquez successivement pour positionner les bâtiments (maison, ferme, forge, etc.).
+-- Une fois tous les bâtiments placés, la carte est sauvegardée dans `map.json` et peut être utilisée dans la simulation principale.
+-
+-🧰 **Éléments techniques à définir ensuite**
+-
+-- Modèle de simulation (discret/continu)
+-- Sauvegarde/chargement de l’état du monde
+-- Extensions futures possibles : maladies, météo, reproduction, économie locale…
+-
+-📌 **Règles importantes**
+-
+-- Tout nouveau fichier ou modification doit être testable immédiatement.
+-- Les classes doivent rester simples, découplées et réutilisables.
+-- Chaque commit doit inclure une description claire des ajouts.
+-- Ne jamais tout mettre dans un seul fichier.
+-- Ajouter des `TODO` ou `# next step` quand une fonction est prévue mais non finie.
++## Licence
+ 
++Projet open source destiné à l'expérimentation.
+diff --git a/TODO.md b/TODO.md
+index 3bde53502c1ce050d3b64a87c460ad554ff99d94..f987c698665a24866555d379134ca1b377acab9a 100644
+--- a/TODO.md
++++ b/TODO.md
+@@ -1,64 +1,40 @@
+-# Plan de développement & TODO
+-
+-## Objectif principal : MVP1
+-Créer une simulation de village modulaire, configurable et réaliste, avec des villageois autonomes et des interactions basiques.
+-
+-## Étapes principales
+-
+-### Étape 1 : Modularité et Configurabilité
+-- [x] Créer des fichiers de configuration :
+-  - `names.json` pour les noms des villageois.
+-  - `professions.json` pour les professions.
+-  - `buildings.json` pour les bâtiments.
+-- [x] Rendre la taille de la carte, le nombre de bâtiments et de villageois configurables via `settings.py`.
+-- [x] Modifier `main.py` pour charger les données des fichiers de configuration.
+-
+-### Étape 2 : Occupations réalistes
+-- [x] Implémenter une logique d'occupation avec :
+-  - 10% de chance d'être "idle".
+-  - 90% de chance de se déplacer vers un bâtiment.
+-- [x] S'assurer que les occupations sont choisies parmi les bâtiments disponibles dans la simulation.
+-- [x] Étendre les choix d'occupation aux phases du soir et de la nuit.
+-
+-### Étape 3 : Système de déplacement
+-- [x] Implémenter un système de déplacement simplifié :
+-  - Les villageois se déplacent en ligne droite vers leur cible.
+-- [x] Gérer les collisions et les priorités entre villageois.
+-- [x] Corriger l'appel à `move_towards_target` dans `Simulation.run_tick`.
+-- [x] Intégrer la classe `Simulation` dans `main.py` pour mettre à jour les déplacements.
+-- [x] Utiliser `KMH_TO_PIXELS_PER_TICK` pour la vitesse des personnages ou supprimer la constante si elle est inutile.
+-
+-### Étape 4 : Gestion des bâtiments et affichage
+-- [x] Vérifier que le nombre de bâtiments dans l'éditeur correspond à la configuration.
+-  - Si le nombre est incorrect, afficher un message d'erreur.
+-- [x] Afficher les noms des bâtiments à l'écran à leur position respective.
+-- [x] Conserver le type et la taille des bâtiments dans l'éditeur lors de la sauvegarde.
+-- [x] Assurer l'encodage UTF‑8 pour la lecture/écriture de `map.json`.
+-- [x] Vérifier les limites de la carte dans `World.add_building` pour éviter les débordements.
+-
+-### Étape 5 : Gestion des logs
+-- [x] Recréer le fichier de log à chaque lancement de la simulation.
+-- [x] Ignorer les fichiers de log (`simulation.log`) via `.gitignore` et supprimer ceux déjà versionnés.
+-
+-### Étape 6 : Interactions simples
+-- [ ] Déclencher des interactions basiques lors de rencontres entre villageois.
+-- [ ] Ajouter un système de dialogues et d'humeurs.
+-
+-### Étape 7 : Revues de code
+-- [ ] Revoir le code de `character.py` pour valider les déplacements et les occupations.
+-- [ ] Revoir le code de `world.py` pour vérifier la gestion des bâtiments et de la carte.
+-- [ ] Revoir le code de `main.py` pour valider la logique de chargement des configurations.
+-
+-### Étape 8 : Tests et Debug
+-- [ ] Tester les comportements des villageois pour s'assurer qu'ils choisissent des occupations réalistes.
+-- [ ] Debugger les problèmes liés aux déplacements et aux occupations.
+-- [ ] Ajuster les paramètres pour équilibrer la simulation.
+-
+-### Étape 9 : Validation finale
+-- [ ] Valider que la simulation est modulaire et configurable.
+-- [ ] S'assurer que les comportements des villageois sont réalistes et alignés avec les objectifs du MVP1.
+-
+-## Notes supplémentaires
+-- Prioriser les tâches liées à la modularité et à la configurabilité.
+-- Documenter chaque classe et fonction pour faciliter les futures extensions.
+-- Préparer une démonstration pour valider le MVP1.
++# Plan de développement
++
++## Stabilisation
++- [x] Empêcher les personnages de quitter le périmètre de leur bâtiment lorsqu'ils sont immobiles.
++- [x] Ajouter des tests unitaires pour valider les déplacements et le changement de phase.
++- [ ] Introduire un système de seed pour rendre les tests déterministes.
++- [ ] Vérifier la stabilité après plusieurs jours de simulation.
++- [ ] Surveiller la dérive numérique en recentrant périodiquement les positions.
++
++## Règles de vie
++- [x] Les enfants passent la journée à l'école.
++- [x] Chaque personnage possède un rôle et se rend dans le bâtiment associé.
++- [ ] Chaque bâtiment produit des ressources au fil du temps.
++- [ ] Gestion d'un inventaire pour les personnages et les bâtiments.
++- [ ] Les travailleurs gagnent de l'argent, se fatiguent et doivent manger.
++- [ ] Transfert d'argent ou de matériel entre personnages et bâtiments.
++- [ ] Gestion de besoins supplémentaires (sociabilité, santé, hygiène).
++- [ ] Traits de personnalité influençant les décisions.
++- [ ] Événements ponctuels : maladies, fêtes ou catastrophes.
++
++## Mécaniques futures
++- Système de pathfinding pour éviter les obstacles.
++- Dialogues, humeurs et interactions sociales simples.
++- Météo influençant les activités.
++- Gestion des familles et du passage du temps.
++- Échanges commerciaux avec d'autres villages ou marchands itinérants.
++- Construction et amélioration de bâtiments.
++- Économie avec offre, demande et prix variables.
++
++## Améliorations techniques
++- Profiler la boucle de simulation pour identifier les goulots d'étranglement.
++- Mettre en place une intégration continue pour exécuter les tests.
++- Exporter des logs pour analyser les comportements anormaux.
++
++## Brainstorm
++- Lier un agent LLM à chaque personnage pour un comportement émergent.
++- Génération procédurale de quêtes ou d'histoires.
++- Mode multijoueur ou interaction entre villages distants.
++- Support d'une carte étendue avec zoom et défilement.
++- Simulation de saisons, de climat et de catastrophes naturelles.
+diff --git a/character.py b/character.py
+index 44caf49c14ecb72d2d6430e058c6ce463b666574..dc317d141c423b406cc1fe9bd351f7b2bbf0e69a 100644
+--- a/character.py
++++ b/character.py
+@@ -1,80 +1,143 @@
++"""Character logic without any rendering concerns."""
++
++import json
+ import math
+ import random
+ import logging
+-from settings import KMH_TO_PIXELS_PER_TICK, NEAR_DESTINATION_RADIUS
++from pathlib import Path
++from settings import (
++    KMH_TO_PIXELS_PER_TICK,
++    NEAR_DESTINATION_RADIUS,
++    ADULT_RADIUS,
++    CHILD_RADIUS,
++)
++
++BASE_PATH = Path(__file__).resolve().parent
++
++with open(BASE_PATH / "genders.json", "r", encoding="utf-8") as f:
++    _GENDERS = {g["name"]: g for g in json.load(f)}
++
++with open(BASE_PATH / "professions.json", "r", encoding="utf-8") as f:
++    _ROLES = {r["name"]: r for r in json.load(f)}
+ 
+ 
+ class Character:
+-    def __init__(self, name, position, random_factor=1.0):
++    """Représente un villageois logique avec un genre et un rôle."""
++
++    genders = _GENDERS
++    roles = _ROLES
++
++    def __init__(self, name, position, random_factor=1.0, role=None, gender=None):
+         self.name = name
+         self.position = tuple(map(float, position))
++        # Position de référence du foyer (centre de la maison)
+         self.home_position = self.position
+         self.state = "idle"
+         self.target = self.position
++        # Point autour duquel le personnage gravite lorsqu'il est immobile
++        self.anchor = self.position
+         self.last_phase = None
+         self.random_factor = random_factor
++        # Temps d'arrêt restant lors des mouvements saccadés
++        self.idle_timer = 0
++
++        # Attribution du genre
++        if gender is None:
++            gender = random.choice(list(self.genders))
++        g_info = self.genders[gender]
++        self.gender = gender
++        self.gender_color = tuple(g_info["color"])
++
++        # Attribution du rôle/profession
++        if role is None:
++            role = random.choice(list(self.roles))
++        r_info = self.roles[role]
++        self.role = role
++        self.role_color = tuple(r_info["color"])
++        self.role_building = r_info.get("building")
++
++        # Taille différente selon l'âge (enfant/adulte)
++        self.radius = CHILD_RADIUS if role == "enfant" else ADULT_RADIUS
+ 
+     def choose_action(self, day_phase, world):
+         """Choisit une action lorsque la phase de la journée change."""
+         if day_phase == self.last_phase:
+             return
+ 
+         self.last_phase = day_phase
+ 
+         if day_phase in ("matin", "midi"):
+-            if not world.buildings or random.random() < 0.5:
++            target_building = None
++            if self.role_building:
++                for b in world.buildings:
++                    if b.type == self.role_building:
++                        target_building = b
++                        break
++            if target_building:
++                self.anchor = target_building.center
++                self.target = self.anchor
++                self.state = f"Aller vers {target_building.name}"
++            else:
++                self.anchor = self.position
+                 self.target = self.position
+                 self.state = "Rester immobile"
+-            else:
+-                target_building = random.choice(world.buildings)
+-                self.target = target_building.position
+-                self.state = f"Aller vers {target_building.name}"
+         elif day_phase == "soir":
++            self.anchor = self.home_position
+             self.target = self.home_position
+             self.state = "Retourner à la maison"
+         elif day_phase == "nuit":
++            self.anchor = self.home_position
+             self.target = self.home_position
+             self.state = "Dormir"
+ 
+         logging.info(f"{self.name} -> {self.state} ({day_phase})")
+ 
+     def move_towards_target(self):
+         """Déplace le personnage vers sa cible avec une part d'aléatoire."""
++        # Gestion des pauses lors des mouvements saccadés
++        if self.idle_timer > 0:
++            self.idle_timer -= 1
++            return
++
+         # Aucun mouvement si le personnage dort déjà chez lui
+         if self.state == "Dormir" and self.position == self.target:
+             return
+ 
+         x, y = self.position
+         tx, ty = self.target
+ 
+         dx = tx - x
+         dy = ty - y
+         distance = math.hypot(dx, dy)
+ 
+         if distance <= NEAR_DESTINATION_RADIUS:
+             if self.state == "Dormir":
+-                self.position = self.target
++                self.position = self.anchor
+             else:
++                # Choisit une nouvelle petite destination autour de l'ancre dans un rayon circulaire
++                angle = random.uniform(0, 2 * math.pi)
++                radius = random.uniform(0, NEAR_DESTINATION_RADIUS)
+                 self.target = (
+-                    tx + random.uniform(-NEAR_DESTINATION_RADIUS, NEAR_DESTINATION_RADIUS),
+-                    ty + random.uniform(-NEAR_DESTINATION_RADIUS, NEAR_DESTINATION_RADIUS),
++                    self.anchor[0] + math.cos(angle) * radius,
++                    self.anchor[1] + math.sin(angle) * radius,
+                 )
++                self.idle_timer = random.randint(5, 20)
+             return
+ 
+         angle = math.atan2(dy, dx) + random.uniform(-0.3, 0.3) * self.random_factor
+         step = KMH_TO_PIXELS_PER_TICK
+         nx = x + math.cos(angle) * step
+         ny = y + math.sin(angle) * step
+ 
+         if math.hypot(tx - nx, ty - ny) > distance:
+             ratio = step / distance
+             nx = x + dx * ratio
+             ny = y + dy * ratio
+ 
+         self.position = (nx, ny)
+ 
+     def perform_daily_action(self, day_phase, world):
+         """Effectue une action en fonction de la phase de la journée."""
+         self.choose_action(day_phase, world)
+         self.move_towards_target()
+ 
+diff --git a/genders.json b/genders.json
+new file mode 100644
+index 0000000000000000000000000000000000000000..c765751dbb5ae019eee63b82cf81f791de9a3d1e
+--- /dev/null
++++ b/genders.json
+@@ -0,0 +1,4 @@
++[
++  {"name": "homme", "color": [66, 135, 245]},
++  {"name": "femme", "color": [245, 66, 200]}
++]
+diff --git a/main.py b/main.py
+index 8c5f03d8d111908471805abdf5287978a8c26954..ed45fb21c547231d0e8492983c11ecaeca88822b 100644
+--- a/main.py
++++ b/main.py
+@@ -1,136 +1,109 @@
+-# Point d'entrée de la simulation
++"""Point d'entrée de la simulation et configuration initiale."""
+ 
+ import pygame
+ from settings import (
+     SCREEN_WIDTH,
+     SCREEN_HEIGHT,
+     NUM_VILLAGERS,
+     TICK_DURATION,
+     MOVEMENT_RANDOM_FACTOR,
+ )
+ from character import Character
+ from world import World, Building
+ from simulation import Simulation
++from renderer import Renderer
+ import json
+ import logging
+ import random  # Importation de random pour le choix aléatoire
+ 
+ # Configuration du logging
+ logging.basicConfig(
+     filename='simulation.log',
+     filemode='w',
+     level=logging.INFO,
+     format='%(asctime)s - %(levelname)s - %(message)s',
+     encoding='utf-8'
+ )
+ logging.info("Simulation démarrée.")
+ 
+ def main():
+     pygame.init()
+     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+     pygame.display.set_caption("Village Simulator")
+ 
+     # Initialisation du monde et des bâtiments
+     world = World(SCREEN_WIDTH, SCREEN_HEIGHT)
+ 
+     # Chargement des configurations de bâtiments (couleurs, tailles)
+     with open("buildings.json", "r", encoding="utf-8") as f:
+         building_configs = {b["type"]: b for b in json.load(f)}
+ 
+     # Chargement des données de la carte depuis le fichier JSON
++    appearance = {}
+     with open("map.json", "r", encoding="utf-8") as f:
+         map_data = json.load(f)
+         for item in map_data:
+             cfg = building_configs.get(item["type"], {})
+             color = tuple(item.get("color", cfg.get("color", (100, 100, 100))))
+             size = tuple(item.get("size", cfg.get("size", (40, 40))))
+-            world.add_building(
+-                Building(
+-                    item["name"],
+-                    tuple(item["position"]),
+-                    size,
+-                    type=item["type"],
+-                    color=color,
+-                )
++            building = Building(
++                item["name"],
++                tuple(item["position"]),
++                size,
++                type=item["type"],
+             )
++            world.add_building(building)
++            appearance[building] = color
+ 
+     # Vérification du nombre de bâtiments
+     if len(world.buildings) != len(map_data):
+         logging.warning("Le nombre de bâtiments affichés ne correspond pas à ceux définis dans map.json.")
+ 
+-    # Chargement des noms depuis names.json
++    # Chargement des données de personnalisation
+     with open("names.json", "r", encoding="utf-8") as f:
+         names = json.load(f)
++    with open("genders.json", "r", encoding="utf-8") as f:
++        genders = [g["name"] for g in json.load(f)]
++    with open("professions.json", "r", encoding="utf-8") as f:
++        roles = [r["name"] for r in json.load(f)]
+ 
+     # Initialisation des personnages : chacun commence dans une maison
+     houses = [b for b in world.buildings if b.type == "maison"]
+     if houses:
+         home_buildings = [random.choice(houses) for _ in range(NUM_VILLAGERS)]
+     else:
+         home_buildings = [None] * NUM_VILLAGERS
+ 
+     villagers = []
+     for home in home_buildings:
+-        position = home.position if home else (0, 0)
++        position = home.center if home else (0, 0)
+         villagers.append(
+             Character(
+                 name=random.choice(names),
+                 position=position,
+                 random_factor=MOVEMENT_RANDOM_FACTOR,
++                role=random.choice(roles),
++                gender=random.choice(genders),
+             )
+         )
+ 
+-    # Initialisation de la simulation
++    # Initialisation de la simulation et du rendu
+     simulation = Simulation(world, villagers)
+-
+-    # Affichage initial des bâtiments avec leurs noms
+-    font = pygame.font.SysFont(None, 20)
+-    for b in world.buildings:
+-        bx, by = b.position
+-        bw, bh = b.size
+-        pygame.draw.rect(screen, b.color, (bx, by, bw, bh))
+-        name_text = font.render(b.name, True, (0, 0, 0))
+-        text_rect = name_text.get_rect(center=(bx + bw / 2, by + bh / 2))
+-        screen.blit(name_text, text_rect)
++    renderer = Renderer(screen, world, appearance)
+ 
+     # Simulation loop
+     clock = pygame.time.Clock()
+     running = True
+     while running:
+         for event in pygame.event.get():
+             if event.type == pygame.QUIT:
+                 running = False
+ 
+         simulation.run_tick()
+-
+-        # Affichage
+-        screen.fill((50, 150, 50))
+-        for b in world.buildings:
+-            bx, by = b.position
+-            bw, bh = b.size
+-            pygame.draw.rect(screen, b.color, (bx, by, bw, bh))
+-            name_text = font.render(b.name, True, (0, 0, 0))
+-            text_rect = name_text.get_rect(center=(bx + bw / 2, by + bh / 2))
+-            screen.blit(name_text, text_rect)
+-
+-        # Affichage des personnages
+-        for villager in villagers:
+-            vx, vy = villager.position
+-            pygame.draw.circle(screen, (0, 0, 255), (int(vx), int(vy)), 10)
+-            name_text = font.render(villager.name, True, (255, 255, 255))
+-            text_rect = name_text.get_rect(center=(int(vx), int(vy) - 15))
+-            screen.blit(name_text, text_rect)
+-
+-        # Affichage de l'horloge
+-        hours = int(simulation.time_of_day)
+-        minutes = int((simulation.time_of_day - hours) * 60)
+-        clock_text = font.render(f"{hours:02d}:{minutes:02d}", True, (0, 0, 0))
+-        screen.blit(clock_text, (10, 10))
+-
+-        pygame.display.flip()
++        renderer.draw(villagers, simulation.time_of_day)
+         clock.tick(1000 // TICK_DURATION)
+ 
+     pygame.quit()
+ 
+ if __name__ == "__main__":
+     main()
+diff --git a/names.json b/names.json
+index 561bdc2464ace80e72cc1057c5b63eaebb5f16ce..8618962d3930d29589b575444682473da080c210 100644
+--- a/names.json
++++ b/names.json
+@@ -1,3 +1,6 @@
+ [
+-  "Alice", "Bob", "Chloé", "David", "Emma", "Félix", "Gisèle", "Hugo", "Inès", "Jules", "Léa", "Marc", "Nina", "Oscar", "Paul", "Quentin", "Rose", "Sophie", "Tom", "Ulysse", "Valérie", "Wendy", "Xavier", "Yasmine", "Zach"
++  "Alice", "Bob", "Chloé", "David", "Emma", "Félix", "Gisèle", "Hugo", "Inès", "Jules", "Léa", "Marc", "Nina", "Oscar", "Paul",
++  "Quentin", "Rose", "Sophie", "Tom", "Ulysse", "Valérie", "Wendy", "Xavier", "Yasmine", "Zach",
++  "Adrien", "Brigitte", "Camille", "Damien", "Elise", "François", "Gaëlle", "Henri", "Isabelle", "Julien",
++  "Karine", "Luc", "Maud", "Noé", "Olivier", "Pascale", "Romain", "Sabine", "Théo", "Victor"
+ ]
+diff --git a/professions.json b/professions.json
+index 60b6f53c0d40114cf6520aaa1c6199bd2bd46e25..b9cd63f4bcb13acc170a04776305429019c7783b 100644
+--- a/professions.json
++++ b/professions.json
+@@ -1,3 +1,10 @@
+ [
+-  "fermier", "boulanger", "forgeron", "enfant", "sage", "chasseur", "cuisinier"
++  {"name": "enfant", "building": "école", "color": [255, 255, 0]},
++  {"name": "fermier", "building": "ferme", "color": [34, 139, 34]},
++  {"name": "forgeron", "building": "forge", "color": [169, 169, 169]},
++  {"name": "cuisinier", "building": "taverne", "color": [255, 165, 0]},
++  {"name": "marchand", "building": "marché", "color": [218, 165, 32]},
++  {"name": "médecin", "building": "hôpital", "color": [255, 0, 0]},
++  {"name": "bibliothécaire", "building": "bibliothèque", "color": [148, 0, 211]},
++  {"name": "artisan", "building": "atelier", "color": [160, 150, 120]}
+ ]
+diff --git a/renderer.py b/renderer.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..1faf811533893b3e63689f99ee4be80e3687e9e9
+--- /dev/null
++++ b/renderer.py
+@@ -0,0 +1,53 @@
++"""Rendering helpers for the village simulator.
++
++The :class:`Renderer` draws the world and characters using Pygame.
++Static elements like buildings are pre-rendered on a background surface to
++minimise per-frame work."""
++
++import pygame
++
++
++class Renderer:
++    """Draws the logical world state to a Pygame screen."""
++
++    def __init__(self, screen, world, appearance):
++        self.screen = screen
++        self.world = world
++        self.appearance = appearance  # mapping building -> colour
++        self.font = pygame.font.SysFont(None, 20)
++        # Pre-render static background with buildings
++        self.background = pygame.Surface(screen.get_size())
++        self._draw_static_world()
++
++    def _draw_static_world(self):
++        self.background.fill((50, 150, 50))
++        for building in self.world.buildings:
++            bx, by = building.position
++            bw, bh = building.size
++            color = self.appearance.get(building, (100, 100, 100))
++            pygame.draw.rect(self.background, color, (bx, by, bw, bh))
++            name_text = self.font.render(building.name, True, (0, 0, 0))
++            text_rect = name_text.get_rect(center=(bx + bw / 2, by + bh / 2))
++            self.background.blit(name_text, text_rect)
++
++    def draw(self, villagers, time_of_day):
++        """Render villagers and UI on top of the static background."""
++        self.screen.blit(self.background, (0, 0))
++        for villager in villagers:
++            vx, vy = villager.position
++            radius = villager.radius
++            pygame.draw.circle(self.screen, villager.role_color, (int(vx), int(vy)), radius)
++            inner_radius = max(1, radius - 3)
++            pygame.draw.circle(
++                self.screen, villager.gender_color, (int(vx), int(vy)), inner_radius
++            )
++            name_text = self.font.render(villager.name, True, (255, 255, 255))
++            text_rect = name_text.get_rect(center=(int(vx), int(vy) - radius - 5))
++            self.screen.blit(name_text, text_rect)
++
++        hours = int(time_of_day)
++        minutes = int((time_of_day - hours) * 60)
++        clock_text = self.font.render(f"{hours:02d}:{minutes:02d}", True, (0, 0, 0))
++        self.screen.blit(clock_text, (10, 10))
++
++        pygame.display.flip()
+diff --git a/requirements.txt b/requirements.txt
+index 39051cd102c7e90baaf7c6eac29b0a91ddc7e115..807dbd17d254563bc605f0f115edfdc6209d3faa 100644
+GIT binary patch
+literal 28
+hcmXS@Oi#>BwY4?UGt)EVDyS?;EiSROwa_yJ@&JO12p|9e
+
+literal 32
+kcmezWuYjSFA)O(SA(tVQ!4?RO81xv-fY^|Mmw}4`0FUMd2LJ#7
+
+diff --git a/settings.py b/settings.py
+index 522f10b55c097ee45d43063782be0a1be3724ca3..af47c2f7e7628554230bc640436377903723fdba 100644
+--- a/settings.py
++++ b/settings.py
+@@ -1,14 +1,20 @@
++"""Configuration options for the simulator."""
++
+ # Paramètres globaux
+ # next step: Définir résolution écran, tick duration, nombre de villageois
+ 
+ SCREEN_WIDTH = 1200
+ SCREEN_HEIGHT = 720
+ TICK_DURATION = 20  # ms (pour accélérer la journée à 3 minutes)
+ NUM_VILLAGERS = 10
+ 
+ # Vitesse de déplacement des villageois (en pixels par tick, calculée pour 5 km/h)
+ KMH_TO_PIXELS_PER_TICK = (500 * 1000 / 60 / 60) * (SCREEN_WIDTH / 40000)
+ 
+ # Facteurs de déplacement
+ MOVEMENT_RANDOM_FACTOR = 0.1  # Intensité de l'aléatoire lors des déplacements
+ NEAR_DESTINATION_RADIUS = 3  # Rayon (en px) de déplacement autour de la cible
++
++# Tailles des personnages selon l'âge
++ADULT_RADIUS = 12
++CHILD_RADIUS = 8
+diff --git a/tests/test_simulation.py b/tests/test_simulation.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..1b7a497aaa689e2c4e602c90b628f396bccd386f
+--- /dev/null
++++ b/tests/test_simulation.py
+@@ -0,0 +1,56 @@
++import math
++import random
++import sys
++import os
++
++sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
++
++from world import World, Building
++from character import Character
++from simulation import Simulation
++from settings import NEAR_DESTINATION_RADIUS
++
++
++def test_phase_progression():
++    world = World(10, 10)
++    char = Character("Test", (0, 0), role="enfant", gender="homme")
++    sim = Simulation(world, [char])
++    assert sim.day_phase is None
++    sim.run_tick()
++    assert sim.day_phase == "matin"
++    for _ in range(sim.phase_duration):
++        sim.run_tick()
++    assert sim.day_phase == "midi"
++
++
++def test_character_stays_near_anchor():
++    random.seed(0)
++    char = Character("Bob", (0, 0), random_factor=0, role="enfant", gender="homme")
++    char.state = "Rester immobile"
++    char.anchor = (0, 0)
++    char.target = (0, 0)
++    for _ in range(200):
++        char.move_towards_target()
++        ax, ay = char.anchor
++        cx, cy = char.position
++        assert math.hypot(cx - ax, cy - ay) <= NEAR_DESTINATION_RADIUS + 1e-6
++
++
++def test_children_go_to_school():
++    world = World(100, 100)
++    school = Building("École", (10, 10), size=(10, 10), type="école")
++    world.add_building(school)
++    child = Character("Kid", (0, 0), role="enfant", gender="homme", random_factor=0)
++    child.perform_daily_action("matin", world)
++    assert child.anchor == school.center
++    assert child.state.startswith("Aller vers")
++
++
++def test_role_goes_to_associated_building():
++    world = World(100, 100)
++    forge = Building("Forge", (20, 20), size=(10, 10), type="forge")
++    world.add_building(forge)
++    smith = Character("Smith", (0, 0), role="forgeron", gender="homme", random_factor=0)
++    smith.perform_daily_action("matin", world)
++    assert smith.anchor == forge.center
++    assert "Forge" in smith.state
+diff --git a/world.py b/world.py
+index d4d79d67dd3577611e27631346c573bdbe341518..c9f5cd384af7390cbb28889511b26caa7d6c226a 100644
+--- a/world.py
++++ b/world.py
+@@ -1,33 +1,42 @@
+-# Classe Building, représentant un bâtiment
++"""Logical representation of the game world.
++
++This module purposely avoids any rendering code; drawing is delegated to the
++``renderer`` module so that the world remains a pure data model."""
++
++# Classe Building, représentant un bâtiment logique sans rendu
+ class Building:
+-    def __init__(self, name, position, size=(30, 30), type="maison", color=(100, 100, 100)):
++    def __init__(self, name, position, size=(30, 30), type="maison"):
+         self.name = name
+         self.position = position  # (x, y)
+         self.size = size  # (w, h)
+         self.type = type  # maison, ferme, forge, taverne, etc.
+-        self.color = color
++        # Centre du bâtiment, utilisé comme point de rassemblement
++        self.center = (
++            position[0] + size[0] / 2,
++            position[1] + size[1] / 2,
++        )
+ 
+ class InteractiveObject:
+     def __init__(self, name, position, type):
+         self.name = name
+         self.position = position
+         self.type = type  # lit, table, four, outil, etc.
+ 
+ class Zone:
+     def __init__(self, name, area, type):
+         self.name = name
+         self.area = area  # (x, y, w, h)
+         self.type = type  # travail, repos, public
+ 
+ # Classe World, contenant la carte du village et les bâtiments
+ # next step: Définir la grille et les bâtiments
+ 
+ class World:
+     def __init__(self, width, height):
+         self.width = width
+         self.height = height
+         self.grid = [[None for _ in range(width)] for _ in range(height)]  # Grille de positions
+         self.buildings = []  # Liste des bâtiments
+         self.objects = []   # Objets interactifs
+         self.zones = []     # Zones d'intérêt
+ 
