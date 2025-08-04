@@ -18,19 +18,27 @@ Créer une simulation de village modulaire, configurable et réaliste, avec des 
   - 10% de chance d'être "idle".
   - 90% de chance de se déplacer vers un bâtiment.
 - [ ] S'assurer que les occupations sont choisies parmi les bâtiments disponibles dans la simulation.
+- [ ] Étendre les choix d'occupation aux phases du soir et de la nuit.
 
 ### Étape 3 : Système de déplacement
 - [x] Implémenter un système de déplacement simplifié :
   - Les villageois se déplacent en ligne droite vers leur cible.
 - [ ] Gérer les collisions et les priorités entre villageois.
+- [ ] Corriger l'appel à `move_towards_target` dans `Simulation.run_tick`.
+- [ ] Intégrer la classe `Simulation` dans `main.py` pour mettre à jour les déplacements.
+- [ ] Utiliser `KMH_TO_PIXELS_PER_TICK` pour la vitesse des personnages ou supprimer la constante si elle est inutile.
 
 ### Étape 4 : Gestion des bâtiments et affichage
 - [ ] Vérifier que le nombre de bâtiments dans l'éditeur correspond à la configuration.
   - Si le nombre est incorrect, afficher un message d'erreur.
 - [ ] Afficher les noms des bâtiments à l'écran à leur position respective.
+- [ ] Conserver le type et la taille des bâtiments dans l'éditeur lors de la sauvegarde.
+- [ ] Assurer l'encodage UTF‑8 pour la lecture/écriture de `map.json`.
+- [ ] Vérifier les limites de la carte dans `World.add_building` pour éviter les débordements.
 
 ### Étape 5 : Gestion des logs
 - [ ] Recréer le fichier de log à chaque lancement de la simulation.
+- [ ] Ignorer les fichiers de log (`simulation.log`) via `.gitignore` et supprimer ceux déjà versionnés.
 
 ### Étape 6 : Interactions simples
 - [ ] Déclencher des interactions basiques lors de rencontres entre villageois.
