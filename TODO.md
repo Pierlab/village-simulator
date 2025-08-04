@@ -17,15 +17,15 @@ Créer une simulation de village modulaire, configurable et réaliste, avec des 
 - [x] Implémenter une logique d'occupation avec :
   - 10% de chance d'être "idle".
   - 90% de chance de se déplacer vers un bâtiment.
-- [ ] S'assurer que les occupations sont choisies parmi les bâtiments disponibles dans la simulation.
-- [ ] Étendre les choix d'occupation aux phases du soir et de la nuit.
+- [x] S'assurer que les occupations sont choisies parmi les bâtiments disponibles dans la simulation.
+- [x] Étendre les choix d'occupation aux phases du soir et de la nuit.
 
 ### Étape 3 : Système de déplacement
 - [x] Implémenter un système de déplacement simplifié :
   - Les villageois se déplacent en ligne droite vers leur cible.
 - [ ] Gérer les collisions et les priorités entre villageois.
-- [ ] Corriger l'appel à `move_towards_target` dans `Simulation.run_tick`.
-- [ ] Intégrer la classe `Simulation` dans `main.py` pour mettre à jour les déplacements.
+- [x] Corriger l'appel à `move_towards_target` dans `Simulation.run_tick`.
+- [x] Intégrer la classe `Simulation` dans `main.py` pour mettre à jour les déplacements.
 - [ ] Utiliser `KMH_TO_PIXELS_PER_TICK` pour la vitesse des personnages ou supprimer la constante si elle est inutile.
 
 ### Étape 4 : Gestion des bâtiments et affichage

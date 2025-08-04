@@ -41,14 +41,29 @@ def main():
     with open("names.json", "r") as f:
         names = json.load(f)
 
-    # Initialisation des personnages
-    villagers = [
-        Character(
-            name=random.choice(names),  # Nom aléatoire
-            position=(100 + i * 50, 100)  # Position initiale
+    # Initialisation des personnages : chacun commence dans un bâtiment existant
+    if world.buildings:
+        # Assigne un bâtiment unique à chaque villageois si possible
+        home_buildings = (
+            random.sample(world.buildings, NUM_VILLAGERS)
+            if len(world.buildings) >= NUM_VILLAGERS
+            else [random.choice(world.buildings) for _ in range(NUM_VILLAGERS)]
         )
-        for i in range(NUM_VILLAGERS)
-    ]
+    else:
+        home_buildings = [None] * NUM_VILLAGERS
+
+    villagers = []
+    for home in home_buildings:
+        position = home.position if home else (0, 0)
+        villagers.append(
+            Character(
+                name=random.choice(names),
+                position=position
+            )
+        )
+
+    # Initialisation de la simulation
+    simulation = Simulation(world, villagers)
 
     # Affichage des bâtiments avec leurs noms
     font = pygame.font.SysFont(None, 32)
@@ -67,6 +82,8 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+
+        simulation.run_tick()
 
         # Affichage
         screen.fill((50, 150, 50))
