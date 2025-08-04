@@ -19,7 +19,6 @@ Simulation autonome d’un village peuplé d’environ 30 personnages, chacun do
 - Étendre `Character.choose_action` aux phases du soir et de la nuit.
 - Conserver le type et la taille des bâtiments dans l’éditeur et vérifier les limites de la carte.
 - Assurer l’encodage UTF‑8 lors de la lecture/écriture de `map.json`.
-- Exploiter `KMH_TO_PIXELS_PER_TICK` pour la vitesse ou supprimer la constante si elle reste inutilisée.
 - Ignorer les fichiers de logs comme `simulation.log` via `.gitignore`.
 - Implémenter un système de pathfinding et des interactions entre villageois pour finaliser le MVP1.
 

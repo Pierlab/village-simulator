@@ -1,13 +1,15 @@
 import random
+from settings import KMH_TO_PIXELS_PER_TICK
 
 
 class Character:
     def __init__(self, name, position):
         self.name = name
-        self.position = position  # Position actuelle (x, y)
-        self.home_position = position  # Domicile
+        # positions are stored as floats to permettre des déplacements fluides
+        self.position = tuple(map(float, position))  # Position actuelle (x, y)
+        self.home_position = self.position  # Domicile
         self.state = "idle"
-        self.target = position
+        self.target = self.position
         self.last_phase = None
 
     def choose_action(self, day_phase, world):
@@ -40,10 +42,16 @@ class Character:
         x, y = self.position
         tx, ty = self.target
 
-        dx = 1 if tx > x else -1 if tx < x else 0
-        dy = 1 if ty > y else -1 if ty < y else 0
+        dx = tx - x
+        dy = ty - y
+        distance = (dx ** 2 + dy ** 2) ** 0.5
 
-        self.position = (x + dx, y + dy)
+        # Déplace le personnage à une vitesse constante définie dans settings.py
+        if distance <= KMH_TO_PIXELS_PER_TICK:
+            self.position = self.target
+        else:
+            ratio = KMH_TO_PIXELS_PER_TICK / distance
+            self.position = (x + dx * ratio, y + dy * ratio)
 
     def perform_daily_action(self, day_phase, world):
         """Effectue une action en fonction de la phase de la journée."""

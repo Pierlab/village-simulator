@@ -26,7 +26,7 @@ Créer une simulation de village modulaire, configurable et réaliste, avec des 
 - [ ] Gérer les collisions et les priorités entre villageois.
 - [x] Corriger l'appel à `move_towards_target` dans `Simulation.run_tick`.
 - [x] Intégrer la classe `Simulation` dans `main.py` pour mettre à jour les déplacements.
-- [ ] Utiliser `KMH_TO_PIXELS_PER_TICK` pour la vitesse des personnages ou supprimer la constante si elle est inutile.
+- [x] Utiliser `KMH_TO_PIXELS_PER_TICK` pour la vitesse des personnages ou supprimer la constante si elle est inutile.
 
 ### Étape 4 : Gestion des bâtiments et affichage
 - [ ] Vérifier que le nombre de bâtiments dans l'éditeur correspond à la configuration.
