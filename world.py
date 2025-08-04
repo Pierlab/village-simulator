@@ -31,9 +31,11 @@ class World:
         self.zones = []     # Zones d'intérêt
 
     def add_building(self, building):
-        self.buildings.append(building)
         bx, by = building.position
         bw, bh = building.size
+        if bx < 0 or by < 0 or bx + bw > self.width or by + bh > self.height:
+            raise ValueError("Building exceeds world boundaries")
+        self.buildings.append(building)
         for x in range(bx, bx + bw):
             for y in range(by, by + bh):
                 self.grid[y][x] = building
