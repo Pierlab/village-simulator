@@ -95,11 +95,11 @@ def main():
             screen.blit(name_text, (bx, by - 20))
 
         # Affichage des personnages
-          for villager in villagers:
-              vx, vy = villager.position
-              pygame.draw.circle(screen, (0, 0, 255), (int(vx), int(vy)), 10)  # Cercle bleu pour représenter les personnages
-              name_text = font.render(villager.name, True, (255, 255, 255))
-              screen.blit(name_text, (int(vx) - 20, int(vy) - 20))
+        for villager in villagers:
+            vx, vy = villager.position
+            pygame.draw.circle(screen, (0, 0, 255), (int(vx), int(vy)), 10)  # Cercle bleu pour représenter les personnages
+            name_text = font.render(villager.name, True, (255, 255, 255))
+            screen.blit(name_text, (int(vx) - 20, int(vy) - 20))
 
         pygame.display.flip()
         clock.tick(1000 // TICK_DURATION)

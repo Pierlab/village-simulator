@@ -7,4 +7,4 @@ TICK_DURATION = 20  # ms (pour accélérer la journée à 3 minutes)
 NUM_VILLAGERS = 10
 
 # Vitesse de déplacement des villageois (en pixels par tick, calculée pour 5 km/h)
-KMH_TO_PIXELS_PER_TICK = (5 * 1000 / 60 / 60) * (SCREEN_WIDTH / 60000)
+KMH_TO_PIXELS_PER_TICK = (500 * 1000 / 60 / 60) * (SCREEN_WIDTH / 60000)
