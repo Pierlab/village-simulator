@@ -6,30 +6,30 @@ from dataclasses import dataclass
 @dataclass
 class Config:
     # Dimensions du monde (zone jouable)
-    screen_width: int = 1200
-    screen_height: int = 720
+    screen_width: int = 1300
+    screen_height: int = 760
     # Largeur du panneau latéral d'information
-    menu_width: int = 300
+    menu_width: int = 200
 
     # Durée d'un tick et nombre de villageois
-    tick_duration: int = 50  # ms (pour accélérer la journée à 3 minutes)
-    num_villagers: int = 13
+    tick_duration: int = 40  # ms (pour accélérer la journée à 3 minutes)
+    num_villagers: int = 25
 
     # Vitesse de déplacement (5 km/h)
     kmh_to_pixels_per_tick: float = 0.0
 
     # Facteurs de déplacement
-    movement_random_factor: int = 10  # Intensité de l'aléatoire lors des déplacements
-    near_destination_radius: int = 40  # Rayon (en px) de déplacement autour de la cible
+    movement_random_factor: int = 2  # Intensité de l'aléatoire lors des déplacements
+    near_destination_radius: int = 25  # Rayon (en px) de déplacement autour de la cible
 
     # Tailles des personnages
     adult_radius: int = 15
-    child_radius: int = 6
+    child_radius: int = 8
     # Répartition du temps de travail (0-1)
     work_time_ratio: float = 0.6
 
     def __post_init__(self):
-        self.kmh_to_pixels_per_tick = (5 * 1000 / 60 / 60) * (self.screen_width / 500)
+        self.kmh_to_pixels_per_tick = (5 * 1000 / 60 / 60) * (self.screen_width / 400)
 
 
 config = Config()
