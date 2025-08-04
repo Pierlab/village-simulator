@@ -50,6 +50,9 @@ def main():
         for i in range(NUM_VILLAGERS)
     ]
 
+    # Initialisation de la simulation
+    simulation = Simulation(world, villagers)
+
     # Affichage des bâtiments avec leurs noms
     font = pygame.font.SysFont(None, 32)
     for b in world.buildings:
@@ -67,6 +70,8 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+
+        simulation.run_tick()
 
         # Affichage
         screen.fill((50, 150, 50))

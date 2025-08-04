@@ -21,5 +21,4 @@ class Simulation:
         self.time = self.tick * 0.1  # Met à jour l'heure de la simulation
         self.update_phase()
         for char in self.characters:
-            char.choose_action(self.day_phase, self.world)
-            char.move_towards_target(self.world)
+            char.perform_daily_action(self.day_phase, self.world)
