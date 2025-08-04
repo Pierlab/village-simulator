@@ -77,10 +77,11 @@ def test_children_stay_at_school_at_lunch():
     assert child.anchor == school.center
 
 
-def test_building_produces_resources():
-    world = World(100, 100)
-    farm = Building("Ferme", (0, 0), production={"nourriture": 2})
+def test_building_produces_resources_with_occupants():
+    world = World(200, 200)
+    farm = Building("Ferme", (0, 0), size=(100, 100), type="ferme", production={"nourriture": 2})
     world.add_building(farm)
-    sim = Simulation(world, [])
+    villager = Character("Bob", farm.center, role="fermier", gender="homme", random_factor=0)
+    sim = Simulation(world, [villager])
     sim.run_tick()
     assert farm.inventory["nourriture"] == 2
