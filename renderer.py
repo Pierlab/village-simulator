@@ -34,10 +34,17 @@ class Renderer:
         for villager in villagers:
             vx, vy = villager.position
             radius = villager.radius
-            pygame.draw.circle(self.screen, villager.role_color, (int(vx), int(vy)), radius)
+            # Couleur centrale représentant le genre
+            pygame.draw.circle(self.screen, villager.gender_color, (int(vx), int(vy)), radius)
+            # Anneau extérieur représentant l'occupation courante
             pygame.draw.circle(
                 self.screen, villager.occupation_color, (int(vx), int(vy)), radius, 3
             )
+            # Lettres du rôle au centre
+            role_text = self.font.render(villager.role_label, True, (0, 0, 0))
+            role_rect = role_text.get_rect(center=(int(vx), int(vy)))
+            self.screen.blit(role_text, role_rect)
+            # Nom au-dessus du personnage
             name_text = self.font.render(villager.name, True, (255, 255, 255))
             text_rect = name_text.get_rect(center=(int(vx), int(vy) - radius - 5))
             self.screen.blit(name_text, text_rect)
@@ -72,12 +79,17 @@ class Renderer:
             info_y += 20
             sel_lines = [
                 f"Nom: {selected.name}",
+                f"Genre: {selected.gender}",
                 f"Rôle: {selected.role}",
                 f"Argent: {selected.money}",
             ]
             if selected.inventory:
                 inv = ", ".join(f"{k}:{v}" for k, v in selected.inventory.items())
                 sel_lines.append(f"Inventaire: {inv}")
+            if selected.current_occupation:
+                sel_lines.append(f"Occupation: {selected.current_occupation}")
+            else:
+                sel_lines.append(f"Destination: {selected.state}")
             for line in sel_lines:
                 text = self.font.render(line, True, (0, 0, 0))
                 self.screen.blit(text, (SCREEN_WIDTH + 10, info_y))

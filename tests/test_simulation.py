@@ -57,6 +57,18 @@ def test_role_goes_to_associated_building():
     assert "Forge" in smith.state
 
 
+def test_low_work_ratio_avoids_work():
+    world = World(100, 100)
+    forge = Building("Forge", (20, 20), size=(10, 10), type="forge")
+    tavern = Building("Taverne", (40, 40), size=(10, 10), type="taverne")
+    world.add_building(forge)
+    world.add_building(tavern)
+    smith = Character("Lazy", (0, 0), role="forgeron", gender="homme", random_factor=0, work_ratio=0.0)
+    smith.perform_daily_action("matin", world)
+    # Avec un ratio nul, le personnage ne doit pas viser son lieu de travail
+    assert smith.anchor != forge.center
+
+
 def test_adult_goes_to_restaurant_at_lunch():
     world = World(200, 200)
     r1 = Building("R1", (10, 10), size=(10, 10), type="restaurant")
