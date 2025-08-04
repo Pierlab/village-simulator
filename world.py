@@ -1,10 +1,11 @@
 # Classe Building, représentant un bâtiment
 class Building:
-    def __init__(self, name, position, size=(30, 30), type="maison"):
+    def __init__(self, name, position, size=(30, 30), type="maison", color=(100, 100, 100)):
         self.name = name
         self.position = position  # (x, y)
         self.size = size  # (w, h)
         self.type = type  # maison, ferme, forge, taverne, etc.
+        self.color = color
 
 class InteractiveObject:
     def __init__(self, name, position, type):

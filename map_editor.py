@@ -11,7 +11,7 @@ def main():
     pygame.init()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     pygame.display.set_caption("Éditeur de carte - Village Simulator")
-    font = pygame.font.SysFont(None, 32)
+    font = pygame.font.SysFont(None, 20)
     world = World(SCREEN_WIDTH, SCREEN_HEIGHT)
     building_idx = 0
     running = True
@@ -25,15 +25,15 @@ def main():
                 name = building["name"]
                 size = tuple(building.get("size", (40, 40)))
                 b_type = building.get("type", name.lower())
-                world.add_building(Building(name, (mx, my), size, type=b_type))
+                color = tuple(building.get("color", (100, 100, 100)))
+                world.add_building(Building(name, (mx, my), size, type=b_type, color=color))
                 building_idx += 1
         screen.fill((220, 220, 220))
         # Affichage des bâtiments déjà placés
         for b in world.buildings:
             bx, by = b.position
             bw, bh = b.size
-            color = (100, 100, 100)
-            pygame.draw.rect(screen, color, (bx, by, bw, bh))
+            pygame.draw.rect(screen, b.color, (bx, by, bw, bh))
         # Indication du prochain bâtiment à placer
         if building_idx < len(BUILDINGS):
             txt = font.render(f"Cliquez pour placer: {BUILDINGS[building_idx]['name']}", True, (0,0,0))
@@ -52,15 +52,18 @@ def main():
                             "name": b.name,
                             "position": list(b.position),
                             "size": list(b.size),
-                            "type": b.type
+                            "type": b.type,
+                            "color": list(b.color)
                         }
                         for b in world.buildings
                     ], f, ensure_ascii=False)
         # Afficher les noms des bâtiments
         for b in world.buildings:
             bx, by = b.position
+            bw, bh = b.size
             name_txt = font.render(b.name, True, (0, 0, 0))
-            screen.blit(name_txt, (bx, by - 20))
+            text_rect = name_txt.get_rect(center=(bx + bw / 2, by + bh / 2))
+            screen.blit(name_txt, text_rect)
         pygame.display.flip()
     pygame.quit()
 

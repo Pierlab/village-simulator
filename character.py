@@ -1,17 +1,18 @@
 import math
 import random
-from settings import KMH_TO_PIXELS_PER_TICK
+import logging
+from settings import KMH_TO_PIXELS_PER_TICK, NEAR_DESTINATION_RADIUS
 
 
 class Character:
-    def __init__(self, name, position):
+    def __init__(self, name, position, random_factor=1.0):
         self.name = name
-        # positions are stored as floats to permettre des déplacements fluides
-        self.position = tuple(map(float, position))  # Position actuelle (x, y)
-        self.home_position = self.position  # Domicile
+        self.position = tuple(map(float, position))
+        self.home_position = self.position
         self.state = "idle"
         self.target = self.position
         self.last_phase = None
+        self.random_factor = random_factor
 
     def choose_action(self, day_phase, world):
         """Choisit une action lorsque la phase de la journée change."""
@@ -35,19 +36,12 @@ class Character:
             self.target = self.home_position
             self.state = "Dormir"
 
-    def move_towards_target(self):
-        """Déplace le personnage vers sa cible avec une légère part d'aléatoire."""
-        # Aucun mouvement si le personnage dort
-        if self.state == "Dormir" and self.position == self.target:
-            return
+        logging.info(f"{self.name} -> {self.state} ({day_phase})")
 
-        # Jitter léger lorsque le personnage est immobile (mais réveillé)
-        if self.position == self.target:
-            jitter = 0.5
-            jx = random.uniform(-jitter, jitter)
-            jy = random.uniform(-jitter, jitter)
-            self.position = (self.position[0] + jx, self.position[1] + jy)
-            self.target = self.position
+    def move_towards_target(self):
+        """Déplace le personnage vers sa cible avec une part d'aléatoire."""
+        # Aucun mouvement si le personnage dort déjà chez lui
+        if self.state == "Dormir" and self.position == self.target:
             return
 
         x, y = self.position
@@ -57,17 +51,21 @@ class Character:
         dy = ty - y
         distance = math.hypot(dx, dy)
 
-        # Déplacement avec une petite variation d'angle
-        if distance <= KMH_TO_PIXELS_PER_TICK:
-            self.position = self.target
+        if distance <= NEAR_DESTINATION_RADIUS:
+            if self.state == "Dormir":
+                self.position = self.target
+            else:
+                self.target = (
+                    tx + random.uniform(-NEAR_DESTINATION_RADIUS, NEAR_DESTINATION_RADIUS),
+                    ty + random.uniform(-NEAR_DESTINATION_RADIUS, NEAR_DESTINATION_RADIUS),
+                )
             return
 
-        angle = math.atan2(dy, dx) + random.uniform(-0.3, 0.3)
+        angle = math.atan2(dy, dx) + random.uniform(-0.3, 0.3) * self.random_factor
         step = KMH_TO_PIXELS_PER_TICK
         nx = x + math.cos(angle) * step
         ny = y + math.sin(angle) * step
 
-        # Empêche l'éloignement de la cible
         if math.hypot(tx - nx, ty - ny) > distance:
             ratio = step / distance
             nx = x + dx * ratio
