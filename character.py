@@ -1,3 +1,4 @@
+import math
 import random
 from settings import KMH_TO_PIXELS_PER_TICK
 
@@ -35,8 +36,18 @@ class Character:
             self.state = "Dormir"
 
     def move_towards_target(self):
-        """Déplace le personnage directement vers la cible en ligne droite."""
+        """Déplace le personnage vers sa cible avec une légère part d'aléatoire."""
+        # Aucun mouvement si le personnage dort
+        if self.state == "Dormir" and self.position == self.target:
+            return
+
+        # Jitter léger lorsque le personnage est immobile (mais réveillé)
         if self.position == self.target:
+            jitter = 0.5
+            jx = random.uniform(-jitter, jitter)
+            jy = random.uniform(-jitter, jitter)
+            self.position = (self.position[0] + jx, self.position[1] + jy)
+            self.target = self.position
             return
 
         x, y = self.position
@@ -44,14 +55,25 @@ class Character:
 
         dx = tx - x
         dy = ty - y
-        distance = (dx ** 2 + dy ** 2) ** 0.5
+        distance = math.hypot(dx, dy)
 
-        # Déplace le personnage à une vitesse constante définie dans settings.py
+        # Déplacement avec une petite variation d'angle
         if distance <= KMH_TO_PIXELS_PER_TICK:
             self.position = self.target
-        else:
-            ratio = KMH_TO_PIXELS_PER_TICK / distance
-            self.position = (x + dx * ratio, y + dy * ratio)
+            return
+
+        angle = math.atan2(dy, dx) + random.uniform(-0.3, 0.3)
+        step = KMH_TO_PIXELS_PER_TICK
+        nx = x + math.cos(angle) * step
+        ny = y + math.sin(angle) * step
+
+        # Empêche l'éloignement de la cible
+        if math.hypot(tx - nx, ty - ny) > distance:
+            ratio = step / distance
+            nx = x + dx * ratio
+            ny = y + dy * ratio
+
+        self.position = (nx, ny)
 
     def perform_daily_action(self, day_phase, world):
         """Effectue une action en fonction de la phase de la journée."""

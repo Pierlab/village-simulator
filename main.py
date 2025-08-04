@@ -103,6 +103,12 @@ def main():
             name_text = font.render(villager.name, True, (255, 255, 255))
             screen.blit(name_text, (int(vx) - 20, int(vy) - 20))
 
+        # Affichage de l'horloge
+        hours = int(simulation.time_of_day)
+        minutes = int((simulation.time_of_day - hours) * 60)
+        clock_text = font.render(f"{hours:02d}:{minutes:02d}", True, (0, 0, 0))
+        screen.blit(clock_text, (10, 10))
+
         pygame.display.flip()
         clock.tick(1000 // TICK_DURATION)
 

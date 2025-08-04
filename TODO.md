@@ -37,8 +37,8 @@ Créer une simulation de village modulaire, configurable et réaliste, avec des 
 - [x] Vérifier les limites de la carte dans `World.add_building` pour éviter les débordements.
 
 ### Étape 5 : Gestion des logs
-- [ ] Recréer le fichier de log à chaque lancement de la simulation.
-- [ ] Ignorer les fichiers de log (`simulation.log`) via `.gitignore` et supprimer ceux déjà versionnés.
+- [x] Recréer le fichier de log à chaque lancement de la simulation.
+- [x] Ignorer les fichiers de log (`simulation.log`) via `.gitignore` et supprimer ceux déjà versionnés.
 
 ### Étape 6 : Interactions simples
 - [ ] Déclencher des interactions basiques lors de rencontres entre villageois.

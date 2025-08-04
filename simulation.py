@@ -9,7 +9,7 @@ class Simulation:
         self.day_phase = "matin"
         self.phases = ["matin", "midi", "soir", "nuit"]
         self.phase_duration = 500  # ticks par phase
-        self.time = self.tick * 0.1  # Exemple : chaque tick représente 0.1 unité de temps
+        self.time_of_day = 0.0  # Heure de la journée en heures
 
     def update_phase(self):
         phase_index = (self.tick // self.phase_duration) % len(self.phases)
@@ -18,7 +18,8 @@ class Simulation:
     def run_tick(self):
         """Exécute un tick de la simulation."""
         self.tick += 1
-        self.time = self.tick * 0.1  # Met à jour l'heure de la simulation
+        total_ticks = self.phase_duration * len(self.phases)
+        self.time_of_day = (self.tick % total_ticks) / total_ticks * 24
         self.update_phase()
         occupied_positions = []
         for char in self.characters:
