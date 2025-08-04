@@ -51,7 +51,7 @@ def test_role_goes_to_associated_building():
     world = World(100, 100)
     forge = Building("Forge", (20, 20), size=(10, 10), type="forge")
     world.add_building(forge)
-    smith = Character("Smith", (0, 0), role="forgeron", gender="homme", random_factor=0)
+    smith = Character("Smith", (0, 0), role="forgeron", gender="homme", random_factor=0, work_ratio=1.0)
     smith.perform_daily_action("matin", world)
     assert smith.anchor == forge.center
     assert "Forge" in smith.state
@@ -63,7 +63,7 @@ def test_adult_goes_to_restaurant_at_lunch():
     r2 = Building("R2", (150, 150), size=(10, 10), type="restaurant")
     world.add_building(r1)
     world.add_building(r2)
-    adult = Character("Bob", (0, 0), role="forgeron", gender="homme", random_factor=0)
+    adult = Character("Bob", (0, 0), role="forgeron", gender="homme", random_factor=0, work_ratio=1.0)
     adult.perform_daily_action("midi", world)
     assert adult.anchor == r1.center
 
@@ -81,7 +81,7 @@ def test_building_produces_resources_with_occupants():
     world = World(200, 200)
     farm = Building("Ferme", (0, 0), size=(100, 100), type="ferme", production={"nourriture": 2})
     world.add_building(farm)
-    villager = Character("Bob", farm.center, role="fermier", gender="homme", random_factor=0)
+    villager = Character("Bob", farm.center, role="fermier", gender="homme", random_factor=0, work_ratio=1.0)
     sim = Simulation(world, [villager])
     sim.run_tick()
     assert farm.inventory["nourriture"] == 2

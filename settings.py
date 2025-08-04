@@ -25,6 +25,8 @@ class Config:
     # Tailles des personnages
     adult_radius: int = 15
     child_radius: int = 6
+    # Répartition du temps de travail (0-1)
+    work_time_ratio: float = 0.6
 
     def __post_init__(self):
         self.kmh_to_pixels_per_tick = (5 * 1000 / 60 / 60) * (self.screen_width / 500)
@@ -43,3 +45,4 @@ MOVEMENT_RANDOM_FACTOR = config.movement_random_factor
 NEAR_DESTINATION_RADIUS = config.near_destination_radius
 ADULT_RADIUS = config.adult_radius
 CHILD_RADIUS = config.child_radius
+WORK_TIME_RATIO = config.work_time_ratio

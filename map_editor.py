@@ -3,9 +3,18 @@ from world import World, Building
 from settings import SCREEN_WIDTH, SCREEN_HEIGHT
 import json
 
-# Charger les bâtiments depuis le fichier buildings.json
+# Charger les bâtiments depuis le fichier buildings.json et générer les occurrences
 with open("buildings.json", "r", encoding="utf-8") as f:
-    BUILDINGS = json.load(f)
+    _configs = json.load(f)
+
+BUILDINGS = []
+for cfg in _configs:
+    count = cfg.get("count", 1)
+    for i in range(1, count + 1):
+        entry = cfg.copy()
+        if count > 1:
+            entry["name"] = f"{cfg['name']} {i}"
+        BUILDINGS.append(entry)
 
 def main():
     pygame.init()
