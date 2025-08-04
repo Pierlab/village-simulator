@@ -66,13 +66,26 @@ class Character:
 
         self.last_phase = day_phase
 
-        if day_phase in ("matin", "midi"):
+        if day_phase in ("matin", "apres_midi"):
             target_building = None
             if self.role_building:
                 for b in world.buildings:
                     if b.type == self.role_building:
                         target_building = b
                         break
+            if target_building:
+                self.anchor = target_building.center
+                self.target = self.anchor
+                self.state = f"Aller vers {target_building.name}"
+            else:
+                self.anchor = self.position
+                self.target = self.position
+                self.state = "Rester immobile"
+        elif day_phase == "midi":
+            if self.role == "enfant":
+                target_building = world.find_nearest_building(self.position, "école")
+            else:
+                target_building = world.find_nearest_building(self.position, "restaurant")
             if target_building:
                 self.anchor = target_building.center
                 self.target = self.anchor
@@ -111,12 +124,10 @@ class Character:
         distance = math.hypot(dx, dy)
 
         if distance <= NEAR_DESTINATION_RADIUS:
-            if self.state == "Dormir":
-                self.position = self.anchor
-            else:
+            if self.state != "Dormir":
                 # Choisit une nouvelle petite destination autour de l'ancre dans un rayon circulaire
                 angle = random.uniform(0, 2 * math.pi)
-                radius = random.uniform(0, NEAR_DESTINATION_RADIUS)
+                radius = random.uniform(NEAR_DESTINATION_RADIUS / 2, NEAR_DESTINATION_RADIUS)
                 self.target = (
                     self.anchor[0] + math.cos(angle) * radius,
                     self.anchor[1] + math.sin(angle) * radius,

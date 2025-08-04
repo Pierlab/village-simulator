@@ -1,4 +1,5 @@
 import math
+import math
 import random
 import sys
 import os
@@ -18,7 +19,7 @@ def test_phase_progression():
     assert sim.day_phase is None
     sim.run_tick()
     assert sim.day_phase == "matin"
-    for _ in range(sim.phase_duration):
+    for _ in range(sim.phase_durations[0]):
         sim.run_tick()
     assert sim.day_phase == "midi"
 
@@ -54,3 +55,32 @@ def test_role_goes_to_associated_building():
     smith.perform_daily_action("matin", world)
     assert smith.anchor == forge.center
     assert "Forge" in smith.state
+
+
+def test_adult_goes_to_restaurant_at_lunch():
+    world = World(200, 200)
+    r1 = Building("R1", (10, 10), size=(10, 10), type="restaurant")
+    r2 = Building("R2", (150, 150), size=(10, 10), type="restaurant")
+    world.add_building(r1)
+    world.add_building(r2)
+    adult = Character("Bob", (0, 0), role="forgeron", gender="homme", random_factor=0)
+    adult.perform_daily_action("midi", world)
+    assert adult.anchor == r1.center
+
+
+def test_children_stay_at_school_at_lunch():
+    world = World(200, 200)
+    school = Building("École", (50, 50), size=(10, 10), type="école")
+    world.add_building(school)
+    child = Character("Kid", (0, 0), role="enfant", gender="homme", random_factor=0)
+    child.perform_daily_action("midi", world)
+    assert child.anchor == school.center
+
+
+def test_building_produces_resources():
+    world = World(100, 100)
+    farm = Building("Ferme", (0, 0), production={"nourriture": 2})
+    world.add_building(farm)
+    sim = Simulation(world, [])
+    sim.run_tick()
+    assert farm.inventory["nourriture"] == 2

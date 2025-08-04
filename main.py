@@ -46,11 +46,13 @@ def main():
             cfg = building_configs.get(item["type"], {})
             color = tuple(item.get("color", cfg.get("color", (100, 100, 100))))
             size = tuple(item.get("size", cfg.get("size", (40, 40))))
+            production = item.get("production", cfg.get("production"))
             building = Building(
                 item["name"],
                 tuple(item["position"]),
                 size,
                 type=item["type"],
+                production=production,
             )
             world.add_building(building)
             appearance[building] = color
@@ -77,13 +79,15 @@ def main():
     villagers = []
     for home in home_buildings:
         position = home.center if home else (0, 0)
+        gender = random.choice(genders)
+        name = random.choice(names.get(gender, [])) if names.get(gender) else "Inconnu"
         villagers.append(
             Character(
-                name=random.choice(names),
+                name=name,
                 position=position,
                 random_factor=MOVEMENT_RANDOM_FACTOR,
                 role=random.choice(roles),
-                gender=random.choice(genders),
+                gender=gender,
             )
         )
 
