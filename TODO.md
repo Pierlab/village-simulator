@@ -29,12 +29,12 @@ Créer une simulation de village modulaire, configurable et réaliste, avec des 
 - [x] Utiliser `KMH_TO_PIXELS_PER_TICK` pour la vitesse des personnages ou supprimer la constante si elle est inutile.
 
 ### Étape 4 : Gestion des bâtiments et affichage
-- [ ] Vérifier que le nombre de bâtiments dans l'éditeur correspond à la configuration.
+- [x] Vérifier que le nombre de bâtiments dans l'éditeur correspond à la configuration.
   - Si le nombre est incorrect, afficher un message d'erreur.
-- [ ] Afficher les noms des bâtiments à l'écran à leur position respective.
-- [ ] Conserver le type et la taille des bâtiments dans l'éditeur lors de la sauvegarde.
-- [ ] Assurer l'encodage UTF‑8 pour la lecture/écriture de `map.json`.
-- [ ] Vérifier les limites de la carte dans `World.add_building` pour éviter les débordements.
+- [x] Afficher les noms des bâtiments à l'écran à leur position respective.
+- [x] Conserver le type et la taille des bâtiments dans l'éditeur lors de la sauvegarde.
+- [x] Assurer l'encodage UTF‑8 pour la lecture/écriture de `map.json`.
+- [x] Vérifier les limites de la carte dans `World.add_building` pour éviter les débordements.
 
 ### Étape 5 : Gestion des logs
 - [ ] Recréer le fichier de log à chaque lancement de la simulation.
