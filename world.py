@@ -20,6 +20,7 @@ class Building:
         self.type = type  # maison, ferme, forge, taverne, etc.
         self.production = production or {}
         self.inventory = {res: 0 for res in self.production}
+        self.money = 0
         self.color = color
         self.occupants = []
         # Centre du bâtiment, utilisé comme point de rassemblement

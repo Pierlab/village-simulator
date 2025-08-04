@@ -12,6 +12,10 @@ Une simulation minimaliste d'un village en 2D. Les habitants se déplacent entre
 - Quand ils sont immobiles, les personnages restent dans un petit périmètre autour de leur bâtiment et bougent de manière saccadée.
 - Chaque villageois possède un **genre** (couleur intérieure) et un **rôle** (couleur extérieure) déterminant son lieu de travail.
 - Les enfants sont plus petits et se rendent automatiquement à l'école pendant la journée.
+- Le nombre d'occurrences de chaque bâtiment est défini dans `buildings.json` et utilisable dans l'éditeur.
+- Possibilité de mettre la simulation en pause (`P`) et d'inspecter un personnage en cliquant dessus.
+- Système économique basique : les travailleurs reçoivent un salaire, peuvent dépenser leur argent et transporter des ressources.
+- La proportion de temps consacrée au travail est configurable (`work_time_ratio`).
 
 ## Lancer la simulation
 
@@ -19,6 +23,11 @@ Une simulation minimaliste d'un village en 2D. Les habitants se déplacent entre
 pip install -r requirements.txt
 python main.py
 ```
+
+## Contrôles
+
+- `P` : mettre en pause ou reprendre la simulation
+- Cliquez sur un personnage pour afficher ses caractéristiques dans le panneau latéral
 
 ## Prochaines étapes
 

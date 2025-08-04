@@ -2,6 +2,7 @@
 # next step: Implémenter la boucle de simulation
 
 import logging
+from economy import pay_salary
 
 
 class Simulation:
@@ -57,6 +58,10 @@ class Simulation:
                     building.occupants.append(char)
                     char.current_occupation = building.type
                     char.occupation_color = building.color
+                    if (
+                        char.role != "enfant" and char.role_building == building.type
+                    ):
+                        pay_salary(char, building)
                     break
 
         for building in self.world.buildings:

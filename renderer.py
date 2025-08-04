@@ -28,7 +28,7 @@ class Renderer:
             text_rect = name_text.get_rect(center=(bx + bw / 2, by + bh / 2))
             self.background.blit(name_text, text_rect)
 
-    def draw(self, villagers, time_of_day):
+    def draw(self, villagers, time_of_day, selected=None, paused=False):
         """Render villagers and UI on top of the static background."""
         self.screen.blit(self.background, (0, 0))
         for villager in villagers:
@@ -67,5 +67,24 @@ class Renderer:
                 inv_text = self.font.render(text, True, (0, 0, 0))
                 self.screen.blit(inv_text, (SCREEN_WIDTH + 10, info_y))
                 info_y += 15
+
+        if selected:
+            info_y += 20
+            sel_lines = [
+                f"Nom: {selected.name}",
+                f"Rôle: {selected.role}",
+                f"Argent: {selected.money}",
+            ]
+            if selected.inventory:
+                inv = ", ".join(f"{k}:{v}" for k, v in selected.inventory.items())
+                sel_lines.append(f"Inventaire: {inv}")
+            for line in sel_lines:
+                text = self.font.render(line, True, (0, 0, 0))
+                self.screen.blit(text, (SCREEN_WIDTH + 10, info_y))
+                info_y += 15
+
+        if paused:
+            pause_text = self.font.render("PAUSE", True, (200, 0, 0))
+            self.screen.blit(pause_text, (SCREEN_WIDTH + 10, self.world.height - 30))
 
         pygame.display.flip()

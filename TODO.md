@@ -11,9 +11,9 @@
 - [x] Les enfants passent la journée à l'école.
 - [x] Chaque personnage possède un rôle et se rend dans le bâtiment associé.
 - [x] Chaque bâtiment produit des ressources au fil du temps.
-- [ ] Gestion d'un inventaire pour les personnages et les bâtiments.
-- [ ] Les travailleurs gagnent de l'argent, se fatiguent et doivent manger.
-- [ ] Transfert d'argent ou de matériel entre personnages et bâtiments.
+- [x] Gestion d'un inventaire pour les personnages et les bâtiments.
+- [x] Les travailleurs gagnent de l'argent et peuvent le dépenser.
+- [x] Transfert d'argent ou de matériel entre personnages et bâtiments.
 - [ ] Gestion de besoins supplémentaires (sociabilité, santé, hygiène).
 - [ ] Traits de personnalité influençant les décisions.
 - [ ] Événements ponctuels : maladies, fêtes ou catastrophes.

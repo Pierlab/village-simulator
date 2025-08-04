@@ -98,13 +98,26 @@ def main():
     # Simulation loop
     clock = pygame.time.Clock()
     running = True
+    paused = False
+    selected = None
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_p:
+                paused = not paused
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mx, my = event.pos
+                if mx < SCREEN_WIDTH and my < SCREEN_HEIGHT:
+                    for v in villagers:
+                        vx, vy = v.position
+                        if (mx - vx) ** 2 + (my - vy) ** 2 <= v.radius ** 2:
+                            selected = v
+                            break
 
-        simulation.run_tick()
-        renderer.draw(villagers, simulation.time_of_day)
+        if not paused:
+            simulation.run_tick()
+        renderer.draw(villagers, simulation.time_of_day, selected, paused)
         clock.tick(1000 // TICK_DURATION)
 
     pygame.quit()

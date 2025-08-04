@@ -10,7 +10,9 @@ from settings import (
     NEAR_DESTINATION_RADIUS,
     ADULT_RADIUS,
     CHILD_RADIUS,
+    WORK_TIME_RATIO,
 )
+from economy import buy_good
 
 BASE_PATH = Path(__file__).resolve().parent
 
@@ -27,7 +29,7 @@ class Character:
     genders = _GENDERS
     roles = _ROLES
 
-    def __init__(self, name, position, random_factor=1.0, role=None, gender=None):
+    def __init__(self, name, position, random_factor=1.0, role=None, gender=None, work_ratio=WORK_TIME_RATIO):
         self.name = name
         self.position = tuple(map(float, position))
         # Position de référence du foyer (centre de la maison)
@@ -62,6 +64,9 @@ class Character:
         # Occupation courante (type de bâtiment) et couleur associée
         self.current_occupation = None
         self.occupation_color = (0, 0, 0)
+        self.money = 0
+        self.inventory = {}
+        self.work_ratio = work_ratio
 
     def choose_action(self, day_phase, world):
         """Choisit une action lorsque la phase de la journée change."""
@@ -72,11 +77,18 @@ class Character:
 
         if day_phase in ("matin", "apres_midi"):
             target_building = None
-            if self.role_building:
+            go_work = random.random() < self.work_ratio or self.role == "enfant"
+            if go_work and self.role_building:
                 for b in world.buildings:
                     if b.type == self.role_building:
                         target_building = b
                         break
+            if not go_work:
+                leisure = [
+                    b for b in world.buildings if b.type not in (self.role_building, "maison")
+                ]
+                if leisure:
+                    target_building = random.choice(leisure)
             if target_building:
                 self.anchor = target_building.center
                 self.target = self.anchor
@@ -151,8 +163,26 @@ class Character:
 
         self.position = (nx, ny)
 
+    def attempt_purchase(self, world):
+        if self.role == "enfant" or self.money <= 0:
+            return
+        for building in world.buildings:
+            if building.contains(self.position):
+                for item, qty in building.inventory.items():
+                    if buy_good(self, building, item):
+                        leisure = [
+                            b for b in world.buildings if b.type not in (self.role_building, "maison")
+                        ]
+                        if leisure:
+                            new_b = random.choice(leisure)
+                            self.anchor = new_b.center
+                            self.target = self.anchor
+                            self.state = f"Visiter {new_b.name}"
+                        return
+
     def perform_daily_action(self, day_phase, world):
         """Effectue une action en fonction de la phase de la journée."""
         self.choose_action(day_phase, world)
         self.move_towards_target()
+        self.attempt_purchase(world)
 
