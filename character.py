@@ -11,6 +11,10 @@ from settings import (
     ADULT_RADIUS,
     CHILD_RADIUS,
     WORK_TIME_RATIO,
+    FATIGUE_MAX,
+    FATIGUE_WORK_RATE,
+    FATIGUE_IDLE_RATE,
+    COLLAPSE_SLEEP_TICKS,
 )
 from economy import buy_good
 
@@ -72,6 +76,20 @@ class Character:
         # Compteurs de temps passés au travail ou en activité libre
         self.work_time = 0
         self.leisure_time = 0
+        # Gestion de la fatigue
+        self.fatigue = 0
+        self.sleep_timer = 0
+
+    def _set_destination(self, building, state_if_none="Rester immobile"):
+        """Affecte l'ancre et la cible en fonction du bâtiment choisi."""
+        if building:
+            self.anchor = building.center
+            self.target = self.anchor
+            self.state = f"Aller vers {building.name}"
+        else:
+            self.anchor = self.position
+            self.target = self.position
+            self.state = state_if_none
 
     def choose_action(self, day_phase, world):
         """Choisit une action lorsque la phase de la journée change."""
@@ -82,7 +100,6 @@ class Character:
 
         if day_phase in ("matin", "apres_midi"):
             target_building = None
-            # Décide d'aller travailler selon le ratio temps de travail/temps libre
             total = self.work_time + self.leisure_time
             current_ratio = self.work_time / total if total else 0
             go_work = current_ratio < self.work_ratio or self.role == "enfant"
@@ -97,27 +114,13 @@ class Character:
                 ]
                 if leisure:
                     target_building = random.choice(leisure)
-            if target_building:
-                self.anchor = target_building.center
-                self.target = self.anchor
-                self.state = f"Aller vers {target_building.name}"
-            else:
-                self.anchor = self.position
-                self.target = self.position
-                self.state = "Rester immobile"
+            self._set_destination(target_building)
         elif day_phase == "midi":
             if self.role == "enfant":
                 target_building = world.find_nearest_building(self.position, "école")
             else:
                 target_building = world.find_nearest_building(self.position, "restaurant")
-            if target_building:
-                self.anchor = target_building.center
-                self.target = self.anchor
-                self.state = f"Aller vers {target_building.name}"
-            else:
-                self.anchor = self.position
-                self.target = self.position
-                self.state = "Rester immobile"
+            self._set_destination(target_building)
         elif day_phase == "soir":
             self.anchor = self.home_position
             self.target = self.home_position
@@ -190,9 +193,27 @@ class Character:
 
     def perform_daily_action(self, day_phase, world):
         """Effectue une action en fonction de la phase de la journée."""
+        if self.sleep_timer > 0:
+            self.sleep_timer -= 1
+            if self.sleep_timer == 0:
+                self.fatigue = 0
+            return
+
         self.choose_action(day_phase, world)
         self.move_towards_target()
         self.attempt_purchase(world)
+
+    def update_fatigue(self, working, sleeping=False):
+        """Met à jour la fatigue selon l'activité."""
+        if sleeping:
+            self.fatigue = 0
+            return
+        self.fatigue += FATIGUE_WORK_RATE if working else FATIGUE_IDLE_RATE
+        if self.fatigue >= FATIGUE_MAX:
+            self.sleep_timer = COLLAPSE_SLEEP_TICKS
+            self.anchor = self.position
+            self.target = self.position
+            self.state = "Sommeil forcé"
 
     def reset_daily_counters(self):
         """Réinitialise les compteurs de temps en début de journée."""

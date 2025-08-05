@@ -67,12 +67,18 @@ class Simulation:
                     ):
                         pay_salary(char, building)
                     break
-            # Mise à jour des compteurs d'occupation pendant les phases actives
+            # Mise à jour des compteurs et de la fatigue
+            working = False
             if self.day_phase in ("matin", "apres_midi"):
-                if char.current_occupation == char.role_building:
+                working = char.current_occupation == char.role_building
+                if working:
                     char.work_time += 1
                 else:
                     char.leisure_time += 1
+            sleeping = char.sleep_timer > 0 or (
+                char.state == "Dormir" and char.position == char.home_position
+            )
+            char.update_fatigue(working, sleeping)
 
         for building in self.world.buildings:
             building.produce(len(building.occupants))
