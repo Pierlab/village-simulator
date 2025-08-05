@@ -29,7 +29,7 @@ class Config:
     work_time_ratio: float = 0.6
 
     # Gestion de la fatigue
-    fatigue_max: int = 100
+    fatigue_max: int = 500
     fatigue_work_rate: int = 2
     fatigue_idle_rate: int = 1
     collapse_sleep_ticks: int = 500  # 6h en supposant 2000 ticks par journée
