@@ -16,7 +16,8 @@ from settings import (
     FATIGUE_IDLE_RATE,
     COLLAPSE_SLEEP_TICKS,
 )
-from economy import buy_good
+from economy import buy_good, pay_salary
+from simnode import SimNode
 
 BASE_PATH = Path(__file__).resolve().parent
 
@@ -27,14 +28,14 @@ with open(BASE_PATH / "professions.json", "r", encoding="utf-8") as f:
     _ROLES = {r["name"]: r for r in json.load(f)}
 
 
-class Character:
+class Character(SimNode):
     """Représente un villageois logique avec un genre et un rôle."""
 
     genders = _GENDERS
     roles = _ROLES
 
     def __init__(self, name, position, random_factor=1.0, role=None, gender=None, work_ratio=WORK_TIME_RATIO):
-        self.name = name
+        super().__init__(name)
         self.position = tuple(map(float, position))
         # Position de référence du foyer (centre de la maison)
         self.home_position = self.position
@@ -202,6 +203,44 @@ class Character:
         self.choose_action(day_phase, world)
         self.move_towards_target()
         self.attempt_purchase(world)
+
+    def update(self, day_phase, world, occupied_positions, *_, **__):
+        """Met à jour le personnage pour un tick de simulation."""
+        previous_position = self.position
+        self.perform_daily_action(day_phase, world)
+
+        for occupied in occupied_positions:
+            dx = self.position[0] - occupied[0]
+            dy = self.position[1] - occupied[1]
+            if dx * dx + dy * dy < 1:
+                self.position = previous_position
+                break
+
+        occupied_positions.append(self.position)
+
+        self.current_occupation = None
+        self.occupation_color = (0, 0, 0)
+        for building in world.buildings:
+            if building.contains(self.position):
+                building.occupants.append(self)
+                self.current_occupation = building.type
+                self.occupation_color = building.color
+                if self.role != "enfant" and self.role_building == building.type:
+                    pay_salary(self, building)
+                break
+
+        working = False
+        if day_phase in ("matin", "apres_midi"):
+            working = self.current_occupation == self.role_building
+            if working:
+                self.work_time += 1
+            else:
+                self.leisure_time += 1
+
+        sleeping = self.sleep_timer > 0 or (
+            self.state == "Dormir" and self.position == self.home_position
+        )
+        self.update_fatigue(working, sleeping)
 
     def update_fatigue(self, working, sleeping=False):
         """Met à jour la fatigue selon l'activité."""
