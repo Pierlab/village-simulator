@@ -1,6 +1,7 @@
 """Configuration options for the simulator."""
 
 from dataclasses import dataclass
+import random
 
 
 @dataclass
@@ -17,6 +18,9 @@ class Config:
 
     # Vitesse de déplacement (5 km/h)
     kmh_to_pixels_per_tick: float = 0.0
+
+    # Graine aléatoire pour rendre la simulation déterministe
+    random_seed: int | None = 0
 
     # Facteurs de déplacement
     movement_random_factor: int = 2  # Intensité de l'aléatoire lors des déplacements
@@ -36,6 +40,8 @@ class Config:
 
     def __post_init__(self):
         self.kmh_to_pixels_per_tick = (5 * 1000 / 60 / 60) * (self.screen_width / 400)
+        if self.random_seed is not None:
+            random.seed(self.random_seed)
 
 
 config = Config()
@@ -52,6 +58,7 @@ NEAR_DESTINATION_RADIUS = config.near_destination_radius
 ADULT_RADIUS = config.adult_radius
 CHILD_RADIUS = config.child_radius
 WORK_TIME_RATIO = config.work_time_ratio
+RANDOM_SEED = config.random_seed
 FATIGUE_MAX = config.fatigue_max
 FATIGUE_WORK_RATE = config.fatigue_work_rate
 FATIGUE_IDLE_RATE = config.fatigue_idle_rate

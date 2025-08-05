@@ -3,7 +3,7 @@
 ## Stabilisation
 - [x] Empêcher les personnages de quitter le périmètre de leur bâtiment lorsqu'ils sont immobiles.
 - [x] Ajouter des tests unitaires pour valider les déplacements et le changement de phase.
-- [ ] Introduire un système de seed pour rendre les tests déterministes.
+ - [x] Introduire un système de seed pour rendre les tests déterministes.
 - [ ] Vérifier la stabilité après plusieurs jours de simulation.
 - [ ] Surveiller la dérive numérique en recentrant périodiquement les positions.
 
