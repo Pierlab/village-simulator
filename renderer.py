@@ -5,7 +5,7 @@ Static elements like buildings are pre-rendered on a background surface to
 minimise per-frame work."""
 
 import pygame
-from settings import SCREEN_WIDTH, MENU_WIDTH
+from settings import SCREEN_WIDTH, MENU_WIDTH, FATIGUE_MAX
 
 
 class Renderer:
@@ -27,6 +27,24 @@ class Renderer:
             name_text = self.font.render(building.name, True, (0, 0, 0))
             text_rect = name_text.get_rect(center=(bx + bw / 2, by + bh / 2))
             self.background.blit(name_text, text_rect)
+
+    def _selected_info_lines(self, selected):
+        """Return formatted info lines for a selected villager."""
+        lines = [
+            f"Nom: {selected.name}",
+            f"Genre: {selected.gender}",
+            f"Rôle: {selected.role}",
+            f"Argent: {selected.money}",
+            f"Fatigue: {selected.fatigue}/{FATIGUE_MAX}",
+        ]
+        if selected.inventory:
+            inv = ", ".join(f"{k}:{v}" for k, v in selected.inventory.items())
+            lines.append(f"Inventaire: {inv}")
+        if selected.current_occupation:
+            lines.append(f"Occupation: {selected.current_occupation}")
+        else:
+            lines.append(f"Destination: {selected.state}")
+        return lines
 
     def draw(self, villagers, time_of_day, selected=None, paused=False):
         """Render villagers and UI on top of the static background."""
@@ -77,20 +95,7 @@ class Renderer:
 
         if selected:
             info_y += 20
-            sel_lines = [
-                f"Nom: {selected.name}",
-                f"Genre: {selected.gender}",
-                f"Rôle: {selected.role}",
-                f"Argent: {selected.money}",
-            ]
-            if selected.inventory:
-                inv = ", ".join(f"{k}:{v}" for k, v in selected.inventory.items())
-                sel_lines.append(f"Inventaire: {inv}")
-            if selected.current_occupation:
-                sel_lines.append(f"Occupation: {selected.current_occupation}")
-            else:
-                sel_lines.append(f"Destination: {selected.state}")
-            for line in sel_lines:
+            for line in self._selected_info_lines(selected):
                 text = self.font.render(line, True, (0, 0, 0))
                 self.screen.blit(text, (SCREEN_WIDTH + 10, info_y))
                 info_y += 15
