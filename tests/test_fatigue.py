@@ -4,7 +4,7 @@ import pytest
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
-from character import Character
+from nodes.character import Character
 from settings import FATIGUE_WORK_RATE, FATIGUE_IDLE_RATE, FATIGUE_MAX, COLLAPSE_SLEEP_TICKS
 
 

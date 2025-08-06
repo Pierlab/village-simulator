@@ -1,18 +1,14 @@
-# Boucle principale, gestion du temps, des agents et de leurs actions
 """Core simulation loop built on top of the SimNode tree."""
 
 import logging
-from simnode import SimNode
 
 
-class Simulation(SimNode):
+class Simulation:
     def __init__(self, world, characters):
-        super().__init__("simulation")
-        self.world = world
-        self.add_child(world)
+        self.root = world
         for char in characters:
             world.add_character(char)
-        self.characters = self.world.characters
+        self.characters = world.characters
         self.tick = 0
         self.day_phase = None
         self.phases = ["matin", "midi", "apres_midi", "soir", "nuit"]
@@ -29,8 +25,9 @@ class Simulation(SimNode):
                 new_phase = phase
                 break
         changed = new_phase != self.day_phase
+        old = self.day_phase
         self.day_phase = new_phase
-        return changed
+        return changed, old, new_phase
 
     def run_tick(self):
         """Exécute un tick de la simulation."""
@@ -41,9 +38,14 @@ class Simulation(SimNode):
             for char in self.characters:
                 char.reset_daily_counters()
         self.time_of_day = ((self.tick % total_ticks) / total_ticks * 24 + 6) % 24
-        phase_changed = self.update_phase()
+        changed, old_phase, new_phase = self.update_phase()
 
-        self.update(self.day_phase)
+        if changed:
+            if old_phase is not None:
+                self.root.propagate_leave_phase(old_phase)
+            self.root.propagate_enter_phase(new_phase)
 
-        if phase_changed:
+        self.root.update(self.day_phase)
+
+        if changed:
             logging.info(f"===== {self.day_phase.upper()} {int(self.time_of_day):02d}h =====")

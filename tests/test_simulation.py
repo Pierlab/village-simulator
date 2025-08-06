@@ -6,9 +6,9 @@ import os
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
-from world import World, Building
-from character import Character
-from simulation import Simulation
+from nodes.world import World, Building
+from nodes.character import Character
+from core.simulation import Simulation
 from settings import NEAR_DESTINATION_RADIUS
 
 

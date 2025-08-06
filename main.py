@@ -9,10 +9,10 @@ from settings import (
     TICK_DURATION,
     MOVEMENT_RANDOM_FACTOR,
 )
-from character import Character
-from world import World, Building
-from simulation import Simulation
-from renderer import Renderer
+from nodes.character import Character
+from nodes.world import World, Building
+from core.simulation import Simulation
+from ui.renderer import Renderer
 import json
 import logging
 import random  # Importation de random pour le choix aléatoire
@@ -36,11 +36,11 @@ def main():
     world = World(SCREEN_WIDTH, SCREEN_HEIGHT)
 
     # Chargement des configurations de bâtiments (couleurs, tailles)
-    with open("buildings.json", "r", encoding="utf-8") as f:
+    with open("data/buildings.json", "r", encoding="utf-8") as f:
         building_configs = {b["type"]: b for b in json.load(f)}
 
     # Chargement des données de la carte depuis le fichier JSON
-    with open("map.json", "r", encoding="utf-8") as f:
+    with open("data/map.json", "r", encoding="utf-8") as f:
         map_data = json.load(f)
         for item in map_data:
             cfg = building_configs.get(item["type"] , {})
@@ -62,11 +62,11 @@ def main():
         logging.warning("Le nombre de bâtiments affichés ne correspond pas à ceux définis dans map.json.")
 
     # Chargement des données de personnalisation
-    with open("names.json", "r", encoding="utf-8") as f:
+    with open("data/names.json", "r", encoding="utf-8") as f:
         names = json.load(f)
-    with open("genders.json", "r", encoding="utf-8") as f:
+    with open("data/genders.json", "r", encoding="utf-8") as f:
         genders = [g["name"] for g in json.load(f)]
-    with open("professions.json", "r", encoding="utf-8") as f:
+    with open("data/professions.json", "r", encoding="utf-8") as f:
         roles = [r["name"] for r in json.load(f)]
 
     # Initialisation des personnages : chacun commence dans une maison

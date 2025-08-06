@@ -2,9 +2,9 @@ import os
 os.environ.setdefault("SDL_VIDEODRIVER", "dummy")
 import pygame
 
-from renderer import Renderer
-from world import World
-from character import Character
+from ui.renderer import Renderer
+from nodes.world import World
+from nodes.character import Character
 
 
 def test_selected_info_includes_fatigue():
