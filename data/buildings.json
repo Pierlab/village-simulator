@@ -1,6 +1,6 @@
 [
-  {"name": "Maison", "type": "maison", "size": [40, 40], "color": [200, 180, 150], "count": 10},
-  {"name": "Ferme", "type": "ferme", "size": [60, 60], "color": [170, 200, 120], "production": {"nourriture": 2}, "count": 2},
+  {"name": "Maison", "type": "maison", "size": [40, 40], "color": [200, 180, 150], "count": 5},
+  {"name": "Ferme", "type": "ferme", "size": [60, 60], "color": [170, 200, 120], "production": {"nourriture": 2}, "count": 1},
   {"name": "Scierie", "type": "scierie", "size": [50, 50], "color": [150, 100, 80], "production": {"bois": 1}, "count": 1},
   {"name": "Mine", "type": "mine", "size": [60, 60], "color": [100, 100, 100], "production": {"minerai": 1}, "count": 1},
   {"name": "Boulangerie", "type": "boulangerie", "size": [50, 40], "color": [220, 180, 150], "production": {"pain": 1}, "count": 1},
@@ -14,5 +14,5 @@
   {"name": "Hôpital", "type": "hôpital", "size": [70, 70], "color": [240, 240, 240], "count": 1},
   {"name": "Bibliothèque", "type": "bibliothèque", "size": [90, 60], "color": [150, 100, 200], "count": 1},
   {"name": "Atelier", "type": "atelier", "size": [50, 40], "color": [160, 150, 120], "count": 1},
-  {"name": "Restaurant", "type": "restaurant", "size": [50, 40], "color": [220, 180, 100], "production": {"repas": 1}, "count": 4}
+  {"name": "Restaurant", "type": "restaurant", "size": [50, 40], "color": [220, 180, 100], "production": {"repas": 1}, "count": 1}
 ]

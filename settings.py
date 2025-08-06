@@ -13,7 +13,7 @@ class Config:
 
     # Durée d'un tick et nombre de villageois
     tick_duration: int = 40  # ms (pour accélérer la journée à 3 minutes)
-    num_villagers: int = 25
+    num_villagers: int = 10
 
     # Vitesse de déplacement (5 km/h)
     kmh_to_pixels_per_tick: float = 0.0
@@ -29,10 +29,10 @@ class Config:
     work_time_ratio: float = 0.6
 
     # Gestion de la fatigue
-    fatigue_max: int = 500
+    fatigue_max: int = 1000
     fatigue_work_rate: int = 2
     fatigue_idle_rate: int = 1
-    collapse_sleep_ticks: int = 500  # 6h en supposant 2000 ticks par journée
+    collapse_sleep_ticks: int = 100  # 6h en supposant 2000 ticks par journée
 
     # Liste optionnelle de modules de plugins à charger au démarrage
     plugins: tuple[str, ...] = ()
