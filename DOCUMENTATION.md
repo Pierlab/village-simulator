@@ -6,6 +6,8 @@ Cette documentation décrit en détail le fonctionnement du programme de simulat
 
 Le simulateur est organisé autour d'une structure d'objets en arbre (`SimNode`) qui relie les différents éléments logiques : monde, bâtiments et personnages. La boucle de simulation met à jour ces objets à chaque tick, tandis que le module `renderer` se charge de l'affichage Pygame.
 
+Un registre de plugins (`core.plugins`) permet de déclarer dynamiquement de nouveaux types de nœuds. Les modules listés dans `settings.PLUGINS` sont importés au démarrage.
+
 ## Principaux modules
 
 ### `main.py`
@@ -71,10 +73,15 @@ Les bâtiments producteurs génèrent des ressources stockées dans leur inventa
 
 Le répertoire `tests/` contient des tests Pytest validant notamment la gestion de la fatigue, le fonctionnement du renderer et la progression de la simulation.
 
+## Outils de développement
+
+- `python main.py --tree` ouvre un visualiseur interactif (`ui.tree_viewer`) montrant la structure de l'arbre `SimNode`.
+
 ## Utilisation
 
 1. Installer les dépendances : `pip install -r requirements.txt`
 2. Lancer la simulation : `python main.py`
+   - ou afficher l'arbre des objets : `python main.py --tree`
 3. Contrôles principaux :
    - `P` pour mettre en pause/reprendre
    - cliquer sur un personnage pour afficher ses détails

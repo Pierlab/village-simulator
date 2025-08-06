@@ -34,6 +34,9 @@ class Config:
     fatigue_idle_rate: int = 1
     collapse_sleep_ticks: int = 500  # 6h en supposant 2000 ticks par journée
 
+    # Liste optionnelle de modules de plugins à charger au démarrage
+    plugins: tuple[str, ...] = ()
+
     def __post_init__(self):
         self.kmh_to_pixels_per_tick = (5 * 1000 / 60 / 60) * (self.screen_width / 400)
 
@@ -56,3 +59,4 @@ FATIGUE_MAX = config.fatigue_max
 FATIGUE_WORK_RATE = config.fatigue_work_rate
 FATIGUE_IDLE_RATE = config.fatigue_idle_rate
 COLLAPSE_SLEEP_TICKS = config.collapse_sleep_ticks
+PLUGINS = config.plugins

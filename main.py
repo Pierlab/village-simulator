@@ -1,6 +1,12 @@
 """Point d'entrée de la simulation et configuration initiale."""
 
+import argparse
+import json
+import logging
+import random  # Importation de random pour le choix aléatoire
+
 import pygame
+
 from settings import (
     SCREEN_WIDTH,
     SCREEN_HEIGHT,
@@ -8,29 +14,35 @@ from settings import (
     NUM_VILLAGERS,
     TICK_DURATION,
     MOVEMENT_RANDOM_FACTOR,
+    PLUGINS,
 )
 from nodes.character import Character
 from nodes.world import World, Building
 from core.simulation import Simulation
+from core.plugins import load_plugins
 from ui.renderer import Renderer
-import json
-import logging
-import random  # Importation de random pour le choix aléatoire
 
 # Configuration du logging
 logging.basicConfig(
-    filename='simulation.log',
-    filemode='w',
+    filename="simulation.log",
+    filemode="w",
     level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    encoding='utf-8'
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    encoding="utf-8",
 )
 logging.info("Simulation démarrée.")
 
+
 def main():
-    pygame.init()
-    screen = pygame.display.set_mode((SCREEN_WIDTH + MENU_WIDTH, SCREEN_HEIGHT))
-    pygame.display.set_caption("Village Simulator")
+    parser = argparse.ArgumentParser(description="Village Simulator")
+    parser.add_argument(
+        "--tree",
+        action="store_true",
+        help="Afficher la structure de l'arbre de simulation sans lancer la boucle principale",
+    )
+    args = parser.parse_args()
+
+    load_plugins(PLUGINS)
 
     # Initialisation du monde et des bâtiments
     world = World(SCREEN_WIDTH, SCREEN_HEIGHT)
@@ -91,8 +103,18 @@ def main():
             )
         )
 
-    # Initialisation de la simulation et du rendu
+    # Initialisation de la simulation
     simulation = Simulation(world, villagers)
+
+    if args.tree:
+        from ui.tree_viewer import run_viewer
+
+        run_viewer(simulation.root)
+        return
+
+    pygame.init()
+    screen = pygame.display.set_mode((SCREEN_WIDTH + MENU_WIDTH, SCREEN_HEIGHT))
+    pygame.display.set_caption("Village Simulator")
     renderer = Renderer(screen, world)
 
     # Simulation loop
