@@ -16,12 +16,16 @@ Une simulation minimaliste d'un village en 2D. Les habitants se déplacent entre
 - Possibilité de mettre la simulation en pause (`P`) et d'inspecter un personnage en cliquant dessus.
 - Système économique basique : les travailleurs reçoivent un salaire, peuvent dépenser leur argent et transporter des ressources.
 - La proportion de temps consacrée au travail est configurable (`work_time_ratio`).
+- Architecture en arbre (`SimNode`) permettant d'ajouter facilement de nouveaux objets ou règles.
+- Support de plugins déclarés dans `settings.py`.
+- Visualisation de la structure via `python main.py --tree`.
 
 ## Lancer la simulation
 
 ```bash
 pip install -r requirements.txt
-python main.py
+python main.py            # lance la simulation
+python main.py --tree     # affiche l'arbre des objets
 ```
 
 ## Contrôles

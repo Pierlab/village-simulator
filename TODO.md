@@ -31,6 +31,8 @@
 - Profiler la boucle de simulation pour identifier les goulots d'étranglement.
 - Mettre en place une intégration continue pour exécuter les tests.
 - Exporter des logs pour analyser les comportements anormaux.
+- [x] Visualiseur d'arbre interactif pour inspecter la simulation (`--tree`).
+- [x] Chargement optionnel de plugins via `settings.PLUGINS`.
 
 ## Brainstorm
 - Lier un agent LLM à chaque personnage pour un comportement émergent.

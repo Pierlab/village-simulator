@@ -29,6 +29,7 @@ def draw_node(screen, node, pos, selected):
     return rect
 
 def run_viewer(root):
+    """Affiche l'arbre de nœuds `SimNode` à partir de ``root``."""
     pygame.init()
     global FONT
     FONT = pygame.font.SysFont(None, 18)
