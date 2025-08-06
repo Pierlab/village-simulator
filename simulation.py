@@ -1,14 +1,18 @@
 # Boucle principale, gestion du temps, des agents et de leurs actions
-# next step: Implémenter la boucle de simulation
+"""Core simulation loop built on top of the SimNode tree."""
 
 import logging
-from economy import pay_salary
+from simnode import SimNode
 
 
-class Simulation:
+class Simulation(SimNode):
     def __init__(self, world, characters):
+        super().__init__("simulation")
         self.world = world
-        self.characters = characters
+        self.add_child(world)
+        for char in characters:
+            world.add_character(char)
+        self.characters = self.world.characters
         self.tick = 0
         self.day_phase = None
         self.phases = ["matin", "midi", "apres_midi", "soir", "nuit"]
@@ -38,50 +42,8 @@ class Simulation:
                 char.reset_daily_counters()
         self.time_of_day = ((self.tick % total_ticks) / total_ticks * 24 + 6) % 24
         phase_changed = self.update_phase()
-        for building in self.world.buildings:
-            building.occupants = []
 
-        occupied_positions = []
-        for char in self.characters:
-            previous_position = char.position
-            char.perform_daily_action(self.day_phase, self.world)
-
-            for occupied in occupied_positions:
-                dx = char.position[0] - occupied[0]
-                dy = char.position[1] - occupied[1]
-                if dx * dx + dy * dy < 1:
-                    char.position = previous_position
-                    break
-
-            occupied_positions.append(char.position)
-
-            char.current_occupation = None
-            char.occupation_color = (0, 0, 0)
-            for building in self.world.buildings:
-                if building.contains(char.position):
-                    building.occupants.append(char)
-                    char.current_occupation = building.type
-                    char.occupation_color = building.color
-                    if (
-                        char.role != "enfant" and char.role_building == building.type
-                    ):
-                        pay_salary(char, building)
-                    break
-            # Mise à jour des compteurs et de la fatigue
-            working = False
-            if self.day_phase in ("matin", "apres_midi"):
-                working = char.current_occupation == char.role_building
-                if working:
-                    char.work_time += 1
-                else:
-                    char.leisure_time += 1
-            sleeping = char.sleep_timer > 0 or (
-                char.state == "Dormir" and char.position == char.home_position
-            )
-            char.update_fatigue(working, sleeping)
-
-        for building in self.world.buildings:
-            building.produce(len(building.occupants))
+        self.update(self.day_phase)
 
         if phase_changed:
             logging.info(f"===== {self.day_phase.upper()} {int(self.time_of_day):02d}h =====")
