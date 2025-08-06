@@ -7,7 +7,9 @@ H_MARGIN = 20
 FONT = None
 
 def layout(root, level=0, x=0, positions=None):
-    positions = positions or {}
+    """Recursively compute the position of each node in the tree."""
+    if positions is None:
+        positions = {}
     children = root.children
     if not children:
         positions[root] = Vector2(x, level * LEVEL_HEIGHT)
@@ -20,6 +22,7 @@ def layout(root, level=0, x=0, positions=None):
     return x
 
 def draw_node(screen, node, pos, selected):
+    """Draw a node representation and return its rectangle."""
     rect = pygame.Rect(pos.x, pos.y, *NODE_SIZE)
     color = (200, 200, 255) if node is selected else (230, 230, 230)
     pygame.draw.rect(screen, color, rect, border_radius=4)
