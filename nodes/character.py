@@ -16,15 +16,16 @@ from settings import (
     FATIGUE_IDLE_RATE,
     COLLAPSE_SLEEP_TICKS,
 )
-from economy import buy_good, pay_salary
-from simnode import SimNode
+from .economy import buy_good, pay_salary
+from core.simnode import SimNode
 
 BASE_PATH = Path(__file__).resolve().parent
+DATA_PATH = BASE_PATH.parent / "data"
 
-with open(BASE_PATH / "genders.json", "r", encoding="utf-8") as f:
+with open(DATA_PATH / "genders.json", "r", encoding="utf-8") as f:
     _GENDERS = {g["name"]: g for g in json.load(f)}
 
-with open(BASE_PATH / "professions.json", "r", encoding="utf-8") as f:
+with open(DATA_PATH / "professions.json", "r", encoding="utf-8") as f:
     _ROLES = {r["name"]: r for r in json.load(f)}
 
 
@@ -204,19 +205,20 @@ class Character(SimNode):
         self.move_towards_target()
         self.attempt_purchase(world)
 
-    def update(self, day_phase, world, occupied_positions, *_, **__):
+    def on_tick(self, day_phase):
         """Met à jour le personnage pour un tick de simulation."""
+        world = self.get_root()
         previous_position = self.position
         self.perform_daily_action(day_phase, world)
 
-        for occupied in occupied_positions:
+        for occupied in world._occupied_positions:
             dx = self.position[0] - occupied[0]
             dy = self.position[1] - occupied[1]
             if dx * dx + dy * dy < 1:
                 self.position = previous_position
                 break
 
-        occupied_positions.append(self.position)
+        world._occupied_positions.append(self.position)
 
         self.current_occupation = None
         self.occupation_color = (0, 0, 0)

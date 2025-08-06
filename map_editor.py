@@ -1,10 +1,10 @@
 import pygame
-from world import World, Building
+from nodes.world import World, Building
 from settings import SCREEN_WIDTH, SCREEN_HEIGHT
 import json
 
 # Charger les bâtiments depuis le fichier buildings.json et générer les occurrences
-with open("buildings.json", "r", encoding="utf-8") as f:
+with open("data/buildings.json", "r", encoding="utf-8") as f:
     _configs = json.load(f)
 
 BUILDINGS = []
@@ -55,7 +55,7 @@ def main():
                 txt = font.render("Tous les bâtiments sont placés !", True, (0,100,0))
                 screen.blit(txt, (20, 20))
                 # Sauvegarde de la carte
-                with open("map.json", "w", encoding="utf-8") as f:
+                with open("data/map.json", "w", encoding="utf-8") as f:
                     json.dump([
                         {
                             "name": b.name,

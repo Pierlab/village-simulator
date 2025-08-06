@@ -6,7 +6,7 @@ This module purposely avoids any rendering code; drawing is delegated to the
 The module now relies on the :class:`SimNode` infrastructure so that each
 element of the simulation can be attached to a tree of nodes."""
 
-from simnode import SimNode
+from core.simnode import SimNode
 
 
 # Classe Building, représentant un bâtiment logique sans rendu
@@ -45,7 +45,7 @@ class Building(SimNode):
         for res, rate in self.production.items():
             self.inventory[res] = self.inventory.get(res, 0) + rate * occupants
 
-    def update(self, *args, **kwargs):  # pragma: no cover - simple passthrough
+    def on_tick(self, *args, **kwargs):  # pragma: no cover - simple passthrough
         self.produce(len(self.occupants))
 
 class InteractiveObject:
@@ -87,7 +87,9 @@ class World(SimNode):
 
     def add_character(self, character):
         self.characters.append(character)
-        self.add_child(character)
+        # Insert characters at start so they update before buildings
+        self.children.insert(0, character)
+        character.parent = self
 
     def is_position_free(self, position):
         x, y = position
@@ -103,14 +105,8 @@ class World(SimNode):
         px, py = position
         return min(candidates, key=lambda b: (b.center[0]-px)**2 + (b.center[1]-py)**2)
 
-    def update(self, day_phase, *args, **kwargs):
-        # Réinitialise les occupants de chaque bâtiment
+    def on_tick(self, day_phase, *args, **kwargs):
+        # Réinitialise les occupants de chaque bâtiment et la liste de positions occupées
         for b in self.buildings:
             b.occupants = []
-
-        occupied_positions = []
-        for char in self.characters:
-            char.update(day_phase, self, occupied_positions)
-
-        for b in self.buildings:
-            b.update()
+        self._occupied_positions = []
